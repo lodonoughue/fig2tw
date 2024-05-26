@@ -1,0 +1,92 @@
+<style>
+  :root {
+    background-color: var(--figma-color-bg);
+    color: var(--figma-color-text);
+  }
+
+  :root,
+  button {
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  span.mono {
+    font-family: monospace;
+    font-weight: bold;
+  }
+
+  button {
+    background-color: var(--figma-color-bg-brand);
+    color: var(--figma-color-text-onbrand);
+    border: none;
+    border-radius: 6px;
+    height: 32px;
+  }
+
+  button:hover {
+    background-color: var(--figma-color-bg-brand-hover);
+  }
+
+  button:active {
+    background-color: var(--figma-color-bg-brand-pressed);
+  }
+
+  button:focus {
+    outline-color: var(--figma-color-border-brand-strong);
+    outline-offset: -2px;
+    outline-width: 2px;
+  }
+
+  .root {
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    gap: 1em;
+  }
+</style>
+<div class="root">
+  <h3>Step 1.</h3>
+  <p>Export the variables into a <span class="mono">JSON</span> file.</p>
+  <button id="export" type="button">Export variables</button>
+  <h3>Step 2.</h3>
+  <p>
+    Place the <span class="mono">JSON</span> file next to your
+    <span class="mono">tailwind.config.js</span>.
+  </p>
+  <h3>Step 3.</h3>
+  <p>
+    Configure the <span class="mono">fig2tw</span> tailwindcss plugin to import
+    the <span class="mono">JSON</span> file.
+  </p>
+</div>
+<script>
+  document.querySelector("#export").addEventListener("click", function () {
+    parent.postMessage({ pluginMessage: { type: "GENERATE_JSON" } }, "*");
+  });
+
+  window.onmessage = function (event) {
+    const { type, data } = event.data.pluginMessage;
+    if (type === "DOWNLOAD_FILE") {
+      saveAs("fig2tw-variables.json", data);
+    }
+  };
+
+  function saveAs(filename, data) {
+    const elem = document.createElement("a");
+    const encodedData = encodeURIComponent(data);
+    elem.setAttribute("href", "data:text/plain;charset=utf-8," + encodedData);
+    elem.setAttribute("download", filename);
+
+    elem.style.display = "none";
+    document.body.appendChild(elem);
+    elem.click();
+    document.body.removeChild(elem);
+  }
+</script>

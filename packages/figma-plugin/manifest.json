@@ -1,0 +1,14 @@
+{
+  "name": "fig2tw",
+  "id": "1376255637027661681",
+  "api": "1.0.0",
+  "main": "dist/fig2tw.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "editorType": ["figma"],
+  "ui": "src/fig2tw.html",
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}
