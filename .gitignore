@@ -3,6 +3,8 @@
 *.log.*
 node_modules
 dist/
+build/
+*.cache
 
 #MacOS
 .DS_Store

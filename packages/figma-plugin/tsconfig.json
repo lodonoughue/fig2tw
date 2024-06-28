@@ -1,10 +1,14 @@
 {
+  "extends": "../../tsconfig.base.json",
+  "include": ["./src/**/*.ts"],
+  "references": [{ "path": "../shared/tsconfig.build.json" }],
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "strict": true,
-    "typeRoots": ["./node_modules/@types", "./node_modules/@figma"],
-    "baseUrl": "src",
-    "outDir": "dist"
+    "target": "es2020",
+    "lib": ["es2022"],
+    "typeRoots": ["../../node_modules/@figma"],
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "declarationDir": "./dist/dts",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   }
 }

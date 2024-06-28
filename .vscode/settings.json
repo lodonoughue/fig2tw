@@ -1,4 +1,3 @@
 {
-  "eslint.experimental.useFlatConfig": true,
-  "eslint.workingDirectories": ["./packages/figma-plugin"]
+  "eslint.workingDirectories": [{ "mode": "auto" }]
 }

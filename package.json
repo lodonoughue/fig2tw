@@ -4,19 +4,37 @@
   "author": "Laurent O'Donoughue <l.odonoughue@gmail.com>",
   "type": "module",
   "scripts": {
-    "dev:figma-plugin": "npm run watch -w @fig2tw/figma-plugin",
-    "lint": "eslint . && prettier --check ."
+    "lint": "npm run lint -ws",
+    "dev:plugin": "concurrently -k \"npm:dev:shared\" \"npm:dev:tailwindcss-plugin\" \"npm:dev:example\"",
+    "dev:shared": "npm run dev -w @fig2tw/shared",
+    "dev:figma-plugin": "npm run dev -w @fig2tw/figma-plugin",
+    "dev:example": "npm run dev -w @fig2tw/example",
+    "dev:tailwindcss-plugin": "npm run dev -w @fig2tw/tailwindcss-plugin",
+    "build": "npm run build -ws",
+    "build:plugins": "npm run build -w @fig2tw/shared -w @fig2tw/figma-plugin -w @fig2tw/tailwindcss-plugin",
+    "build:shared": "npm run build -w @fig2tw/shared",
+    "test": "vitest",
+    "test:shared": "npm run test -w @fig2tw/shared",
+    "test:figma-plugin": "npm run test -w @fig2tw/figma-plugin",
+    "test:tailwindcss-plugin": "npm run test -w @fig2tw/tailwindcss-plugin"
   },
   "license": "MIT",
   "workspaces": [
-    "packages/figma-plugin"
+    "packages/*"
   ],
   "devDependencies": {
     "@eslint/js": "^9.3.0",
+    "@types/eslint__js": "^8.42.3",
+    "@types/eslint-config-prettier": "^6.11.3",
+    "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.3.0",
+    "install": "^0.13.0",
+    "npm": "^10.8.1",
     "prettier": "^3.2.5",
-    "typescript-eslint": "^7.10.0"
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.10.0",
+    "vitest": "^1.6.0"
   }
 }

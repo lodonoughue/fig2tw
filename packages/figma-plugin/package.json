@@ -2,19 +2,22 @@
   "name": "@fig2tw/figma-plugin",
   "version": "1.0.0",
   "type": "module",
-  "main": "dist/code.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "watch": "npm run build -- --watch"
+    "lint": "eslint . && prettier --check src/ --config ../../.prettierrc.js --log-level warn",
+    "dev": "rollup -c rollup.config.js --watch",
+    "build": "rollup -c rollup.config.js",
+    "test": "vitest run"
   },
-  "author": "",
-  "license": "",
+  "dependencies": {
+    "@fig2tw/shared": "*"
+  },
   "devDependencies": {
-    "@figma/eslint-plugin-figma-plugins": "*",
-    "@figma/plugin-typings": "*",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
-    "eslint": "^8.54.0",
-    "typescript": "^5.3.2"
+    "@figma/plugin-typings": "^1.93.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "rollup": "^4.18.0",
+    "rollup-plugin-copy": "^3.5.0"
   }
 }

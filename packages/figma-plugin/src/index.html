@@ -74,7 +74,7 @@
   window.onmessage = function (event) {
     const { type, data } = event.data.pluginMessage;
     if (type === "DOWNLOAD_FILE") {
-      saveAs("fig2tw-variables.json", data);
+      saveAs("fig2tw.json", data);
     }
   };
 
