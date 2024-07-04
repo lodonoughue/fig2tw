@@ -1,5 +1,5 @@
 import { RecursiveRecord } from "./record.js";
-import { assert } from "./utils.js";
+import { assert, fail } from "./utils.js";
 
 export function isValueArray(obj: unknown): obj is AnyValue[] {
   return Array.isArray(obj);
@@ -32,8 +32,15 @@ export function valueOf(
 export function valueOf(
   collection: string,
   mode: string,
+  value: RefValue["value"],
+): RefValue;
+
+export function valueOf(
+  collection: string,
+  mode: string,
   value: AnyValue["value"],
 ): AnyValue {
+  assert(value != null, "cannot make a value from a null object");
   if (typeof value === "string") {
     return { collection, mode, value, type: "string" };
   }
@@ -43,10 +50,13 @@ export function valueOf(
   if (typeof value === "boolean") {
     return { collection, mode, value, type: "boolean" };
   }
-  if (typeof value === "object") {
+  if (isRgbaObject(value)) {
     return { collection, mode, value, type: "color" };
   }
-  assert(false, `cannot make a value of type ${typeof value}`);
+  if (isRefObject(value)) {
+    return { collection, mode, value, type: "ref" };
+  }
+  fail(`cannot make a value of type ${typeof value}`);
 }
 
 export type ValueStruct = RecursiveRecord<string, AnyValue[]>;
@@ -78,6 +88,16 @@ export function isColorValue(value: AnyValue): value is ColorValue {
   return value.type === "color";
 }
 
+function isRgbaObject(object: unknown): object is ColorValue["value"] {
+  return (
+    object != null &&
+    typeof object === "object" &&
+    "r" in object &&
+    "g" in object &&
+    "b" in object
+  );
+}
+
 export interface StringValue extends Value {
   type: "string";
   value: string;
@@ -103,4 +123,17 @@ export interface BooleanValue extends Value {
 
 export function isBooleanValue(value: AnyValue): value is BooleanValue {
   return value.type === "boolean";
+}
+
+export interface RefValue extends Value {
+  type: "ref";
+  value: string[];
+}
+
+export function isRefValue(value: AnyValue): value is RefValue {
+  return value.type === "ref";
+}
+
+function isRefObject(value: unknown): value is RefValue["value"] {
+  return Array.isArray(value) && value.every(it => typeof it === "string");
 }

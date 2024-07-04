@@ -8,17 +8,9 @@ export default {
     fig2twPlugin({
       variables: fig2twTheme,
       root: { gridSystemPx: 8 },
-      defineColors: it => ({
-        ...it.Mode.Scheme.Neutral,
-        ...it.Mode.Scheme.Primary,
-        ...it.Mode.Scheme.Secondary,
-        ...it.Mode.Scheme.Success,
-        ...it.Mode.Scheme.Alert,
-        ...it.Mode.Scheme.Error,
-      }),
-      defineRadius: it => it.Density.Radius,
       defineSpacing: it => it.Density.Space,
-      defineSizes: it => it.Density.Size,
+      defineColors: it => it.Scheme,
+      defineRadius: it => it.Density.Radius,
     }),
   ],
 } satisfies Config;

@@ -1,8 +1,10 @@
 import {
   AnyValue,
+  RefValue,
   ValueStruct,
   assert,
   buildRecord,
+  fail,
   valueOf,
 } from "@fig2tw/shared";
 import { asBoolean, asColor, asNumber, asString } from "./converters.js";
@@ -32,33 +34,43 @@ function buildValueStruct(
   collections: VariableCollection[],
   variables: Variable[],
 ): ValueStruct {
+  const getCollection = withCache(withArgs(findCollection, collections));
+  const asComposite = withArgs(asVariableComposite, getCollection);
+  const allVariables = variables.map(asComposite);
+
   return buildRecord(
-    collections,
-    collection => collection.name,
-    collection =>
-      buildRecord(
-        variables.filter(byCollection(collection)),
-        variable => variable.name.split("/"),
-        variable =>
-          collection.modes.map(mode =>
-            buildValue(
-              collection.name,
-              mode.name,
-              variable,
-              resolveVariableValue(variables, mode.modeId, variable),
-            ),
-          ),
-      ),
+    allVariables,
+    getPath,
+    withArgs(createValueArray, allVariables),
   );
+}
+
+function resolveValue(
+  allVariables: VariableComposite[],
+  collection: VariableCollection,
+  mode: VariableCollection["modes"][0],
+  { variable }: VariableComposite,
+): AnyValue {
+  const value = getVariableValue(variable, mode);
+  if (!isVariableAlias(value)) {
+    return buildValue(collection.name, mode.name, variable.resolvedType, value);
+  }
+
+  const ref = findRefVariable(allVariables, value);
+  if (ref.collection.id === collection.id) {
+    return resolveValue(allVariables, collection, mode, ref);
+  } else {
+    return buildRefValue(collection.name, mode.name, ref);
+  }
 }
 
 function buildValue(
   collection: string,
   mode: string,
-  variable: Variable,
+  type: VariableResolvedDataType,
   value: VariableValue,
 ): AnyValue {
-  switch (variable.resolvedType) {
+  switch (type) {
     case "COLOR":
       return valueOf(collection, mode, asColor(value));
     case "BOOLEAN":
@@ -68,6 +80,14 @@ function buildValue(
     case "STRING":
       return valueOf(collection, mode, asString(value));
   }
+}
+
+function buildRefValue(
+  collection: string,
+  mode: string,
+  variable: VariableComposite,
+): RefValue {
+  return valueOf(collection, mode, getPath(variable));
 }
 
 async function loadAsync() {
@@ -80,30 +100,22 @@ async function loadAsync() {
   };
 }
 
-function byCollection(collection: VariableCollection) {
-  return (variable: Variable) =>
-    variable.variableCollectionId === collection.id;
+function getVariableValue(
+  { name, valuesByMode }: Variable,
+  { modeId, name: mode }: VariableCollection["modes"][0],
+): VariableValue {
+  const val = valuesByMode[modeId];
+  assert(val != null, `variable "${name}" does not have a value for "${mode}"`);
+  return val;
 }
 
-function resolveVariableValue(
-  variables: Variable[],
-  modeId: string,
-  variable: Variable,
-): VariableValue {
-  const value = variable.valuesByMode[modeId];
-  assert(
-    value != null,
-    `resolved variable "${variable.name}" does not have a value for mode "${modeId}"`,
-  );
-
-  if (!isVariableAlias(value)) {
-    return value;
-  }
-
-  const ref = variables.find(it => it.id === value.id);
+function findRefVariable(
+  allVariables: VariableComposite[],
+  value: VariableAlias,
+): VariableComposite {
+  const ref = allVariables.find(({ variable }) => variable.id === value.id);
   assert(ref != null, `cannot resolve variable alias to variable "${value.id}`);
-
-  return resolveVariableValue(variables, modeId, ref);
+  return ref;
 }
 
 function isVariableAlias(value: VariableValue): value is VariableAlias {
@@ -113,3 +125,60 @@ function isVariableAlias(value: VariableValue): value is VariableAlias {
     value.type === "VARIABLE_ALIAS"
   );
 }
+
+function getPath({ collection, variable }: VariableComposite): string[] {
+  return [collection.name, ...variable.name.split("/")];
+}
+
+function withCache<A, R>(func: (key: A) => R): (key: A) => R {
+  const cache = new Map<A, R>();
+  return key => {
+    let result = cache.get(key);
+    if (result == null) {
+      result = func(key);
+      cache.set(key, result);
+    }
+    return result;
+  };
+}
+
+function withArgs<
+  T extends unknown[],
+  A extends unknown[],
+  R extends unknown | void,
+>(func: (...args: [...T, ...A]) => R, ...args: T): (...args: A) => R {
+  return (...other) => func(...args, ...other);
+}
+
+function findCollection(
+  collections: VariableCollection[],
+  collectionId: string,
+): VariableCollection {
+  return (
+    collections.find(it => it.id === collectionId) ??
+    fail(`cannot find collection ${collectionId}`)
+  );
+}
+
+function asVariableComposite(
+  getCollection: GetCollection,
+  variable: Variable,
+): VariableComposite {
+  return { variable, collection: getCollection(variable.variableCollectionId) };
+}
+
+function createValueArray(
+  allVariables: VariableComposite[],
+  { collection, variable }: VariableComposite,
+): AnyValue[] {
+  return collection.modes.map(mode =>
+    resolveValue(allVariables, collection, mode, { variable, collection }),
+  );
+}
+
+interface VariableComposite {
+  variable: Variable;
+  collection: VariableCollection;
+}
+
+type GetCollection = (collectionId: string) => VariableCollection;

@@ -3,12 +3,12 @@
   "include": ["./src/**/*.ts"],
   "references": [{ "path": "../shared/tsconfig.build.json" }],
   "compilerOptions": {
-    "target": "es2020",
-    "lib": ["es2022"],
+    "target": "ES2019",
+    "lib": ["ES2019"],
     "typeRoots": ["../../node_modules/@figma"],
     "rootDir": "./src",
-    "outDir": "./dist",
-    "declarationDir": "./dist/dts",
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "outDir": "./build",
+    "declarationDir": "./build",
+    "tsBuildInfoFile": "./build/.tsbuildinfo"
   }
 }

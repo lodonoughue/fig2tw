@@ -5,8 +5,10 @@
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint . && prettier --check src/ --config ../../.prettierrc.js --log-level warn",
-    "dev": "rollup -c rollup.config.js --watch",
-    "build": "rollup -c rollup.config.js",
+    "dev": "npm run build:tsc -- --watch",
+    "build": "npm run build:tsc && npm run build:rollup",
+    "build:tsc": "tsc --project tsconfig.build.json",
+    "build:rollup": "rollup -c rollup.config.js",
     "test": "vitest run"
   },
   "dependencies": {
@@ -16,7 +18,6 @@
     "@figma/plugin-typings": "^1.93.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^11.1.6",
     "rollup": "^4.18.0",
     "rollup-plugin-copy": "^3.5.0"
   }
