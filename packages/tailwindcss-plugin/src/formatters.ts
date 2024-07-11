@@ -146,7 +146,6 @@ export function formattersOf(overrides: Partial<Options> = {}): Options {
 }
 
 export interface FormatOptions extends ConfigOptions, FormattersOptions {
-  context: string;
   selectorPath: string[];
   variablePath: string[];
 }
@@ -159,7 +158,6 @@ export function formatOptionsOf({
   return {
     config: configOf(config),
     formatters: formattersOf(formatters),
-    context: "unknown",
     selectorPath: [],
     variablePath: [],
     ...rest,

@@ -7,7 +7,7 @@ export default {
   plugins: [
     fig2twPlugin({
       variables: fig2twTheme,
-      root: { gridSystemPx: 8 },
+      gridSystem: { unitPx: 8 },
       defineSpacing: it => it.Density.Space,
       defineColors: it => it.Scheme,
       defineRadius: it => it.Density.Radius,

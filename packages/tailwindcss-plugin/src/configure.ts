@@ -5,7 +5,6 @@ import { ConfigOptions } from "./config.js";
 import { buildTwConfig } from "./tw-config.js";
 
 export function configure<T extends VariableObject>(
-  context: string,
   variables: T,
   selector: VariableSelector<T> | undefined,
   options: ConfigOptions & FormattersOptions,
@@ -13,8 +12,8 @@ export function configure<T extends VariableObject>(
   if (selector == null) return { cssBundle: {}, twConfig: {} };
 
   const values = selector(variables);
-  const cssBundle = buildCssBundle(context, variables, values, options);
-  const twConfig = buildTwConfig(context, values, options);
+  const cssBundle = buildCssBundle(variables, values, options);
+  const twConfig = buildTwConfig(values, options);
   return { cssBundle, twConfig };
 }
 

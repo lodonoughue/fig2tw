@@ -18,28 +18,19 @@ import { FormatOptions, FormattersOptions } from "./formatters.js";
 import { ConfigOptions } from "./config.js";
 
 export function buildCssBundle(
-  context: string,
   allvariables: VariableObject,
   selectedVariables: Variable<string>[] | VariableObject,
   opts: ConfigOptions & FormattersOptions,
 ): CssBundle {
   const bundle = {} as CssBundle;
   forEachVariableArray(selectedVariables, (selectorPath, values) => {
-    appendToBundleRecursive(
-      bundle,
-      context,
-      allvariables,
-      selectorPath,
-      values,
-      opts,
-    );
+    appendToBundleRecursive(bundle, allvariables, selectorPath, values, opts);
   });
   return bundle;
 }
 
 function appendToBundleRecursive(
   bundle: CssBundle,
-  context: string,
   allVariables: VariableObject,
   selectorPath: string[],
   selectedVariables: Variable<string>[],
@@ -50,7 +41,6 @@ function appendToBundleRecursive(
   selectedVariables.forEach(variable => {
     const { collection, mode, path: variablePath } = variable;
     const formatOptions = {
-      context,
       selectorPath,
       variablePath,
       ...opts,
@@ -66,7 +56,6 @@ function appendToBundleRecursive(
       const refValues = findRefVariableArray(allVariables, variable);
       appendToBundleRecursive(
         bundle,
-        context,
         allVariables,
         selectorPath,
         refValues,

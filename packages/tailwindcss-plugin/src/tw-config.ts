@@ -12,7 +12,6 @@ import { ConfigOptions } from "./config.js";
 import { fail } from "assert";
 
 export function buildTwConfig(
-  context: string,
   selectedVariables: Variable<string>[] | VariableObject,
   opts: ConfigOptions & FormattersOptions,
 ): Record<string, string> {
@@ -26,7 +25,6 @@ export function buildTwConfig(
       ...opts,
       selectorPath: path,
       variablePath: firstVariable.path,
-      context,
     } satisfies FormatOptions;
 
     const twProperty = toTwProperty(formatOptions);

@@ -8,7 +8,7 @@ const opts = pluginOptionsOf();
 
 describe("buildCssBundle", () => {
   it("should return an empty bundle if variable object is empty", () => {
-    const result = buildCssBundle("test", {}, {}, opts);
+    const result = buildCssBundle({}, {}, opts);
     expect(result).toStrictEqual({});
   });
 
@@ -35,7 +35,7 @@ describe("buildCssBundle", () => {
       baz: [valueOf(bazPath, "Size", "Regular", "baz-regular")],
     } satisfies VariableObject;
 
-    const result = buildCssBundle("test", {}, variables, opts);
+    const result = buildCssBundle({}, variables, opts);
     expect(result).toStrictEqual({
       ":root, :root.mode__light": {
         "--foo": "foo-light",
@@ -72,7 +72,6 @@ describe("buildCssBundle", () => {
     const toCssColorValue = () => "mocked-color";
 
     const result = buildCssBundle(
-      "test",
       {},
       variables,
       pluginOptionsOf({

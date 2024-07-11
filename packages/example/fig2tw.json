@@ -5,7 +5,7 @@
         {
           "path": ["Palette", "Red", "red-50"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 252, "g": 237, "b": 240, "a": 1 },
           "type": "color"
         }
@@ -14,7 +14,7 @@
         {
           "path": ["Palette", "Red", "red-100"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 245, "g": 198, "b": 208, "a": 1 },
           "type": "color"
         }
@@ -23,7 +23,7 @@
         {
           "path": ["Palette", "Red", "red-200"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 240, "g": 170, "b": 185, "a": 1 },
           "type": "color"
         }
@@ -32,7 +32,7 @@
         {
           "path": ["Palette", "Red", "red-300"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 234, "g": 131, "b": 152, "a": 1 },
           "type": "color"
         }
@@ -41,7 +41,7 @@
         {
           "path": ["Palette", "Red", "red-400"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 229, "g": 107, "b": 133, "a": 1 },
           "type": "color"
         }
@@ -50,7 +50,7 @@
         {
           "path": ["Palette", "Red", "red-500"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 223, "g": 70, "b": 102, "a": 1 },
           "type": "color"
         }
@@ -59,7 +59,7 @@
         {
           "path": ["Palette", "Red", "red-600"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 203, "g": 64, "b": 93, "a": 1 },
           "type": "color"
         }
@@ -68,7 +68,7 @@
         {
           "path": ["Palette", "Red", "red-700"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 158, "g": 50, "b": 72, "a": 1 },
           "type": "color"
         }
@@ -77,7 +77,7 @@
         {
           "path": ["Palette", "Red", "red-800"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 123, "g": 39, "b": 56, "a": 1 },
           "type": "color"
         }
@@ -86,7 +86,7 @@
         {
           "path": ["Palette", "Red", "red-900"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 94, "g": 29, "b": 43, "a": 1 },
           "type": "color"
         }
@@ -95,7 +95,7 @@
         {
           "path": ["Palette", "Red", "red-50@64"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 252, "g": 237, "b": 240, "a": 0.6399999856948853 },
           "type": "color"
         }
@@ -106,7 +106,7 @@
         {
           "path": ["Palette", "Violet", "violet-50"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 244, "g": 238, "b": 244, "a": 1 },
           "type": "color"
         }
@@ -115,7 +115,7 @@
         {
           "path": ["Palette", "Violet", "violet-100"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 219, "g": 201, "b": 221, "a": 1 },
           "type": "color"
         }
@@ -124,7 +124,7 @@
         {
           "path": ["Palette", "Violet", "violet-200"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 202, "g": 175, "b": 204, "a": 1 },
           "type": "color"
         }
@@ -133,7 +133,7 @@
         {
           "path": ["Palette", "Violet", "violet-300"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 178, "g": 138, "b": 181, "a": 1 },
           "type": "color"
         }
@@ -142,7 +142,7 @@
         {
           "path": ["Palette", "Violet", "violet-400"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 163, "g": 116, "b": 167, "a": 1 },
           "type": "color"
         }
@@ -151,7 +151,7 @@
         {
           "path": ["Palette", "Violet", "violet-500"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 140, "g": 81, "b": 145, "a": 1 },
           "type": "color"
         }
@@ -160,7 +160,7 @@
         {
           "path": ["Palette", "Violet", "violet-600"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 127, "g": 74, "b": 132, "a": 1 },
           "type": "color"
         }
@@ -169,7 +169,7 @@
         {
           "path": ["Palette", "Violet", "violet-700"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 99, "g": 58, "b": 103, "a": 1 },
           "type": "color"
         }
@@ -178,7 +178,7 @@
         {
           "path": ["Palette", "Violet", "violet-800"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 77, "g": 45, "b": 80, "a": 1 },
           "type": "color"
         }
@@ -187,7 +187,7 @@
         {
           "path": ["Palette", "Violet", "violet-900"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 59, "g": 34, "b": 61, "a": 1 },
           "type": "color"
         }
@@ -196,7 +196,7 @@
         {
           "path": ["Palette", "Violet", "violet-50@64"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 244, "g": 238, "b": 244, "a": 0.6399999856948853 },
           "type": "color"
         }
@@ -207,7 +207,7 @@
         {
           "path": ["Palette", "Blue", "blue-50"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 235, "g": 238, "b": 241, "a": 1 },
           "type": "color"
         }
@@ -216,7 +216,7 @@
         {
           "path": ["Palette", "Blue", "blue-100"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 194, "g": 201, "b": 212, "a": 1 },
           "type": "color"
         }
@@ -225,7 +225,7 @@
         {
           "path": ["Palette", "Blue", "blue-200"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 164, "g": 175, "b": 192, "a": 1 },
           "type": "color"
         }
@@ -234,7 +234,7 @@
         {
           "path": ["Palette", "Blue", "blue-300"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 122, "g": 138, "b": 163, "a": 1 },
           "type": "color"
         }
@@ -243,7 +243,7 @@
         {
           "path": ["Palette", "Blue", "blue-400"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 97, "g": 116, "b": 145, "a": 1 },
           "type": "color"
         }
@@ -252,7 +252,7 @@
         {
           "path": ["Palette", "Blue", "blue-500"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 57, "g": 81, "b": 117, "a": 1 },
           "type": "color"
         }
@@ -261,7 +261,7 @@
         {
           "path": ["Palette", "Blue", "blue-600"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 52, "g": 74, "b": 106, "a": 1 },
           "type": "color"
         }
@@ -270,7 +270,7 @@
         {
           "path": ["Palette", "Blue", "blue-700"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 40, "g": 58, "b": 83, "a": 1 },
           "type": "color"
         }
@@ -279,7 +279,7 @@
         {
           "path": ["Palette", "Blue", "blue-800"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 31, "g": 45, "b": 64, "a": 1 },
           "type": "color"
         }
@@ -288,7 +288,7 @@
         {
           "path": ["Palette", "Blue", "blue-900"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 24, "g": 34, "b": 49, "a": 1 },
           "type": "color"
         }
@@ -297,7 +297,7 @@
         {
           "path": ["Palette", "Blue", "blue-50@64"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 235, "g": 238, "b": 241, "a": 0.6399999856948853 },
           "type": "color"
         }
@@ -308,7 +308,7 @@
         {
           "path": ["Palette", "Neutral", "white"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 255, "g": 255, "b": 255, "a": 1 },
           "type": "color"
         }
@@ -317,7 +317,7 @@
         {
           "path": ["Palette", "Neutral", "white@64"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 255, "g": 255, "b": 255, "a": 0.6399999856948853 },
           "type": "color"
         }
@@ -326,7 +326,7 @@
         {
           "path": ["Palette", "Neutral", "black"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 0, "g": 0, "b": 0, "a": 1 },
           "type": "color"
         }
@@ -335,7 +335,7 @@
         {
           "path": ["Palette", "Neutral", "black@64"],
           "collection": "Palette",
-          "mode": "Coloured",
+          "mode": "Colored",
           "value": { "r": 0, "g": 0, "b": 0, "a": 0.6399999856948853 },
           "type": "color"
         }
@@ -617,6 +617,15 @@
           "collection": "Density",
           "mode": "Regular",
           "value": 9999,
+          "type": "number"
+        }
+      ],
+      "sm": [
+        {
+          "path": ["Density", "Radius", "sm"],
+          "collection": "Density",
+          "mode": "Regular",
+          "value": 16,
           "type": "number"
         }
       ]
