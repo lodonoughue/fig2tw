@@ -6,11 +6,11 @@ import {
   toCssColorValue,
   toCssStringValue,
   toCssClass,
+  formatOptionsOf,
 } from "./formatters.js";
 import { range, valueOf } from "@fig2tw/shared";
-import { formatOptionsOf } from "./format.js";
 
-const options = formatOptionsOf({ path: [], context: "test" });
+const options = formatOptionsOf();
 
 describe("toCssSelector", () => {
   it("should return a selector targeting :root and :root.classname", () => {
@@ -61,7 +61,7 @@ describe("toCssSelector", () => {
       "bar-baz",
       formatOptionsOf({
         ...options,
-        root: { selector: "html" },
+        config: { rootSelector: "html" },
       }),
     );
     expect(result).toBe("html, html.bar-baz");
@@ -70,46 +70,35 @@ describe("toCssSelector", () => {
 
 describe("toCssVariableProperty", () => {
   it("should format path to kebab case with two leading dashes", () => {
-    const path = ["some", "Var witH", "sTrange cases"];
-    const result = toCssVariableProperty(
-      formatOptionsOf({ context: "test", path }),
-    );
-    expect(result).toBe("--test-some-var-with-strange-cases");
+    const variablePath = ["some", "Var witH", "sTrange cases"];
+    const result = toCssVariableProperty(formatOptionsOf({ variablePath }));
+    expect(result).toBe("--some-var-with-strange-cases");
   });
-
-  it.each([["color"], ["size"], ["space"], ["radius"]])(
-    "should prefix the variable with the context",
-    context => {
-      const path = ["path"];
-      const result = toCssVariableProperty(formatOptionsOf({ path, context }));
-      expect(result).toBe(`--${context}-path`);
-    },
-  );
 });
 
 describe("toCssNumberRemValue", () => {
   it.each([[12], [16], [32]])(
     "should return a rem value relative to the fontSize (%spx)",
-    fontSizePx => {
-      const opts = formatOptionsOf({ ...options, root: { fontSizePx } });
-      const value = valueOf("foo", "bar", 16);
+    rootFontSizePx => {
+      const opts = formatOptionsOf({ ...options, config: { rootFontSizePx } });
+      const value = valueOf([], "foo", "bar", 16);
       const result = toCssNumberRemValue(value, opts);
-      expect(result).toBe(`${16 / fontSizePx}rem`);
+      expect(result).toBe(`${16 / rootFontSizePx}rem`);
     },
   );
 });
 
 describe("toCssColorValue", () => {
-  it("should return the rgba values directly", () => {
-    const value = valueOf("foo", "bar", { r: 3, g: 5, b: 7, a: 0.5 });
+  it("should return the rgb values directly, without alpha", () => {
+    const value = valueOf([], "foo", "bar", { r: 3, g: 5, b: 7, a: 0.5 });
     const result = toCssColorValue(value, options);
-    expect(result).toBe("3, 5, 7, 0.5");
+    expect(result).toBe("3 5 7");
   });
 });
 
 describe("toCssStringValue", () => {
   it("should return the string value directly", () => {
-    const value = valueOf("foo", "bar", "baz");
+    const value = valueOf([], "foo", "bar", "baz");
     const result = toCssStringValue(value, options);
     expect(result).toBe("baz");
   });

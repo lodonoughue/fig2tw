@@ -1,19 +1,19 @@
-import { ValueStruct, deepMerge, range } from "@fig2tw/shared";
+import { VariableObject, deepMerge, range } from "@fig2tw/shared";
 import plugin from "tailwindcss/plugin.js";
-import { ValueSelector, configure } from "./configure.js";
+import { VariableSelector, configure } from "./configure.js";
 import {
   FormattersOptions,
-  PartialFormattersOptions,
   formattersOf,
   toCssNumberPxValue,
 } from "./formatters.js";
-import { PartialRootOptions, RootOptions, rootOf } from "./root.js";
+import { ConfigOptions, configOf } from "./config.js";
 import { CssBundle } from "./css.js";
 import { ImportOptions, importVariables } from "./import.js";
 import { Config } from "tailwindcss";
+import { DeepPartial } from "./types.js";
 
-export function fig2twPlugin<T extends ValueStruct = ValueStruct>(
-  opts: ImportOptions<T> & DefineOptions<T> & PartialPluginOptions,
+export function fig2twPlugin<T extends VariableObject = VariableObject>(
+  opts: ImportOptions<T> & DefineOptions<T> & DeepPartial<PluginOptions>,
 ) {
   const options = pluginOptionsOf(opts);
   const variables = importVariables<T>(opts);
@@ -33,17 +33,17 @@ export function fig2twPlugin<T extends ValueStruct = ValueStruct>(
 }
 
 function configureRoot({
-  root,
+  config,
   formatters,
 }: PluginOptions): ConfigurationResult {
   const spacing = { "0": "0px", px: "1px" } as Record<string, string>;
-  [0.5, 1.5, 2.5, ...rangeOf(root)].forEach(it => {
-    spacing[String(it)] = formatters.toCssNumberValue(it, { root });
+  [0.5, 1.5, 2.5, ...rangeOf(config)].forEach(it => {
+    spacing[String(it)] = formatters.toCssNumberValue(it, { config });
   });
 
   return {
     cssBundle: {
-      [root.selector]: { fontSize: `${root.fontSizePx}px` },
+      [config.rootSelector]: { fontSize: `${config.rootFontSizePx}px` },
     },
     twConfig: {
       spacing,
@@ -51,11 +51,11 @@ function configureRoot({
   };
 }
 
-function rangeOf(root: PluginOptions["root"]) {
-  return range(1, root.maxGridUnit + 1);
+function rangeOf(config: PluginOptions["config"]) {
+  return range(1, config.gridSystemMaxUnit + 1);
 }
 
-function configureColors<T extends ValueStruct>(
+function configureColors<T extends VariableObject>(
   variables: T,
   { defineColors, ...opts }: DefineOptions<T> & PluginOptions,
 ): ConfigurationResult {
@@ -66,7 +66,7 @@ function configureColors<T extends ValueStruct>(
   };
 }
 
-function configureSpacing<T extends ValueStruct>(
+function configureSpacing<T extends VariableObject>(
   variables: T,
   { defineSpacing, ...options }: DefineOptions<T> & PluginOptions,
 ): ConfigurationResult {
@@ -77,7 +77,7 @@ function configureSpacing<T extends ValueStruct>(
   };
 }
 
-function configureSizes<T extends ValueStruct>(
+function configureSizes<T extends VariableObject>(
   variables: T,
   { defineSizes, ...options }: DefineOptions<T> & PluginOptions,
 ): ConfigurationResult {
@@ -97,7 +97,7 @@ function configureSizes<T extends ValueStruct>(
   };
 }
 
-function configureRadius<T extends ValueStruct>(
+function configureRadius<T extends VariableObject>(
   variables: T,
   { defineRadius, ...options }: DefineOptions<T> & PluginOptions,
 ): ConfigurationResult {
@@ -108,7 +108,7 @@ function configureRadius<T extends ValueStruct>(
   };
 }
 
-function configureScreens<T extends ValueStruct>(
+function configureScreens<T extends VariableObject>(
   variables: T,
   { defineScreens, ...opts }: DefineOptions<T> & PluginOptions,
 ): ConfigurationResult {
@@ -143,26 +143,23 @@ interface ConfigurationResult {
   twConfig: Config["theme"];
 }
 
-interface PluginOptions extends RootOptions, FormattersOptions {}
-interface PartialPluginOptions
-  extends PartialRootOptions,
-    PartialFormattersOptions {}
+interface PluginOptions extends ConfigOptions, FormattersOptions {}
 
-interface DefineOptions<T extends ValueStruct> {
-  defineColors?: ValueSelector<T>;
-  defineScreens?: ValueSelector<T>;
-  defineSpacing?: ValueSelector<T>;
-  defineSizes?: ValueSelector<T>;
-  defineRadius?: ValueSelector<T>;
+interface DefineOptions<T extends VariableObject> {
+  defineColors?: VariableSelector<T>;
+  defineScreens?: VariableSelector<T>;
+  defineSpacing?: VariableSelector<T>;
+  defineSizes?: VariableSelector<T>;
+  defineRadius?: VariableSelector<T>;
 }
 
-export function pluginOptionsOf<T extends PartialPluginOptions>({
-  root,
+export function pluginOptionsOf<T extends DeepPartial<PluginOptions>>({
+  config,
   formatters,
   ...overrides
-}: PartialPluginOptions = {}): T & PluginOptions {
+}: DeepPartial<PluginOptions> = {}): T & PluginOptions {
   return {
-    root: rootOf(root),
+    config: configOf(config),
     formatters: formattersOf(formatters),
     ...overrides,
   } as T & PluginOptions;

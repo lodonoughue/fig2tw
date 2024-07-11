@@ -1,66 +1,70 @@
-import { ValueStruct, valueOf } from "@fig2tw/shared";
+import { VariableObject, valueOf } from "@fig2tw/shared";
 import { buildCssBundle } from "./css.js";
 import { describe, expect, it } from "vitest";
-import { FormatOptions } from "./format.js";
 import { pluginOptionsOf } from "./plugin.js";
+import { FormatOptions } from "./formatters.js";
 
 const opts = pluginOptionsOf();
 
 describe("buildCssBundle", () => {
-  it("should return an empty bundle if struct is empty", () => {
-    const result = buildCssBundle("test", {}, opts);
+  it("should return an empty bundle if variable object is empty", () => {
+    const result = buildCssBundle("test", {}, {}, opts);
     expect(result).toStrictEqual({});
   });
 
   it("should build expected css model", () => {
+    const fooPath = ["Foo"];
+    const barAPath = ["Bar", "Bar A"];
+    const barBPath = ["Bar", "Bar B"];
+    const bazPath = ["Baz"];
     const variables = {
       foo: [
-        valueOf("Mode", "Light", "foo-light"),
-        valueOf("Mode", "Dark", "foo-dark"),
+        valueOf(fooPath, "Mode", "Light", "foo-light"),
+        valueOf(fooPath, "Mode", "Dark", "foo-dark"),
       ],
       bar: {
         "Bar A": [
-          valueOf("Mode", "Light", "bar-a-light"),
-          valueOf("Mode", "Dark", "bar-a-dark"),
+          valueOf(barAPath, "Mode", "Light", "bar-a-light"),
+          valueOf(barAPath, "Mode", "Dark", "bar-a-dark"),
         ],
         "Bar B": [
-          valueOf("Mode", "Light", "bar-b-light"),
-          valueOf("Mode", "Dark", "bar-b-dark"),
+          valueOf(barBPath, "Mode", "Light", "bar-b-light"),
+          valueOf(barBPath, "Mode", "Dark", "bar-b-dark"),
         ],
       },
-      baz: [valueOf("Size", "Regular", "baz-regular")],
-    } satisfies ValueStruct;
+      baz: [valueOf(bazPath, "Size", "Regular", "baz-regular")],
+    } satisfies VariableObject;
 
-    const result = buildCssBundle("test", variables, opts);
+    const result = buildCssBundle("test", {}, variables, opts);
     expect(result).toStrictEqual({
       ":root, :root.mode__light": {
-        "--test-foo": "foo-light",
-        "--test-bar-bar-a": "bar-a-light",
-        "--test-bar-bar-b": "bar-b-light",
+        "--foo": "foo-light",
+        "--bar-bar-a": "bar-a-light",
+        "--bar-bar-b": "bar-b-light",
       },
       ":root.mode__dark": {
-        "--test-foo": "foo-dark",
-        "--test-bar-bar-a": "bar-a-dark",
-        "--test-bar-bar-b": "bar-b-dark",
+        "--foo": "foo-dark",
+        "--bar-bar-a": "bar-a-dark",
+        "--bar-bar-b": "bar-b-dark",
       },
       ":root, :root.size__regular": {
-        "--test-baz": "baz-regular",
+        "--baz": "baz-regular",
       },
     });
   });
 
   it("should use formatters from options", () => {
     const variables = {
-      foo: [valueOf("foo", "bar", 42)],
-      bar: [valueOf("foo", "bar", "value")],
-      baz: [valueOf("foo", "bar", true)],
-      buz: [valueOf("foo", "bar", { r: 0, g: 0, b: 0, a: 0 })],
+      foo: [valueOf([], "foo", "bar", 42)],
+      bar: [valueOf([], "foo", "bar", "value")],
+      baz: [valueOf([], "foo", "bar", true)],
+      buz: [valueOf([], "foo", "bar", { r: 0, g: 0, b: 0, a: 0 })],
     };
 
     const toCssSelector = (_: string, classname: string) =>
       `mocked-selector__${classname}`;
-    const toCssVariableProperty = ({ path }: FormatOptions) =>
-      `mocked-variable-${path![0]}`;
+    const toCssVariableProperty = ({ selectorPath }: FormatOptions) =>
+      `mocked-variable-${selectorPath![0]}`;
     const toCssClass = () => "mocked-class";
     const toCssNumberValue = () => "mocked-number";
     const toCssStringValue = () => "mocked-string";
@@ -69,6 +73,7 @@ describe("buildCssBundle", () => {
 
     const result = buildCssBundle(
       "test",
+      {},
       variables,
       pluginOptionsOf({
         formatters: {

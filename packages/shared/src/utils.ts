@@ -1,9 +1,12 @@
-export function assert(value: unknown, errorMessage: string): asserts value {
-  if (!value) fail(errorMessage);
+export function assert(
+  value: unknown,
+  ...errorMessages: string[]
+): asserts value {
+  if (!value) fail(...errorMessages);
 }
 
-export function fail(errorMessage: string): never {
-  throw new Error(`fig2tw: ${errorMessage}`);
+export function fail(...errorMessages: string[]): never {
+  throw new Error(`fig2tw: ${errorMessages.join(" ")}`);
 }
 
 export function zip<T, U>(arr1: T[], arr2: U[]): [T, U][] {

@@ -1,19 +1,19 @@
-import { AnyValue, ValueStruct } from "@fig2tw/shared";
+import { Variable, VariableObject } from "@fig2tw/shared";
 import { CssBundle, buildCssBundle } from "./css.js";
 import { FormattersOptions } from "./formatters.js";
-import { RootOptions } from "./root.js";
+import { ConfigOptions } from "./config.js";
 import { buildTwConfig } from "./tw-config.js";
 
-export function configure<T extends ValueStruct>(
+export function configure<T extends VariableObject>(
   context: string,
   variables: T,
-  selector: ValueSelector<T> | undefined,
-  options: RootOptions & FormattersOptions,
+  selector: VariableSelector<T> | undefined,
+  options: ConfigOptions & FormattersOptions,
 ): Result {
   if (selector == null) return { cssBundle: {}, twConfig: {} };
 
   const values = selector(variables);
-  const cssBundle = buildCssBundle(context, values, options);
+  const cssBundle = buildCssBundle(context, variables, values, options);
   const twConfig = buildTwConfig(context, values, options);
   return { cssBundle, twConfig };
 }
@@ -23,6 +23,6 @@ interface Result {
   twConfig: Record<string, string>;
 }
 
-export type ValueSelector<T extends ValueStruct> = (
+export type VariableSelector<T extends VariableObject> = (
   struct: T,
-) => AnyValue[] | ValueStruct;
+) => Variable<string>[] | VariableObject;
