@@ -1,14 +1,15 @@
 {
-  "name": "fig2tw",
-  "id": "1376255637027661681",
   "api": "1.0.0",
-  "main": "index.js",
-  "ui": "index.html",
-  "capabilities": [],
-  "enableProposedApi": false,
-  "documentAccess": "dynamic-page",
-  "editorType": ["figma"],
+  "editorType": [
+    "figma"
+  ],
+  "id": "1376255637027661681",
+  "name": "fig2tw",
+  "main": "build/main.js",
+  "ui": "build/ui.js",
   "networkAccess": {
-    "allowedDomains": ["none"]
+    "allowedDomains": [
+      "https://fonts.gstatic.com"
+    ]
   }
 }

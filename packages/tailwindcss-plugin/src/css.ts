@@ -13,23 +13,33 @@ import {
   Variable,
   forEachVariableArray,
   isValueVariable,
+  getCollection,
 } from "@fig2tw/shared";
-import { FormatOptions, FormattersOptions } from "./formatters.js";
+import { Context, FormatOptions, FormattersOptions } from "./formatters.js";
 import { ConfigOptions } from "./config.js";
 
 export function buildCssBundle(
+  context: Context,
   allvariables: VariableObject,
   selectedVariables: Variable<string>[] | VariableObject,
   opts: ConfigOptions & FormattersOptions,
 ): CssBundle {
   const bundle = {} as CssBundle;
   forEachVariableArray(selectedVariables, (selectorPath, values) => {
-    appendToBundleRecursive(bundle, allvariables, selectorPath, values, opts);
+    appendToBundleRecursive(
+      context,
+      bundle,
+      allvariables,
+      selectorPath,
+      values,
+      opts,
+    );
   });
   return bundle;
 }
 
 function appendToBundleRecursive(
+  context: Context,
   bundle: CssBundle,
   allVariables: VariableObject,
   selectorPath: string[],
@@ -39,8 +49,10 @@ function appendToBundleRecursive(
   const { toCssClass, toCssSelector, toCssVariableProperty } = opts.formatters;
 
   selectedVariables.forEach(variable => {
-    const { collection, mode, path: variablePath } = variable;
+    const { mode, path: variablePath } = variable;
+    const collection = getCollection(variable);
     const formatOptions = {
+      context,
       selectorPath,
       variablePath,
       ...opts,
@@ -55,6 +67,7 @@ function appendToBundleRecursive(
     if (isRefVariable(variable)) {
       const refValues = findRefVariableArray(allVariables, variable);
       appendToBundleRecursive(
+        context,
         bundle,
         allVariables,
         selectorPath,
@@ -67,20 +80,20 @@ function appendToBundleRecursive(
 
 function formatCssValue(variable: Variable<string>, options: FormatOptions) {
   if (isRefVariable(variable)) {
-    return options.formatters.toCssRefValue(variable, options);
+    return options.formatters.toCssRefValue(variable.ref, options);
   }
   if (isValueVariable(variable)) {
     if (isColorVariable(variable)) {
-      return options.formatters.toCssColorValue(variable, options);
+      return options.formatters.toCssColorValue(variable.value, options);
     }
     if (isBooleanVariable(variable)) {
-      return options.formatters.toCssBooleanValue(variable, options);
+      return options.formatters.toCssBooleanValue(variable.value, options);
     }
     if (isNumberVariable(variable)) {
-      return options.formatters.toCssNumberValue(variable, options);
+      return options.formatters.toCssNumberValue(variable.value, options);
     }
     if (isStringVariable(variable)) {
-      return options.formatters.toCssStringValue(variable, options);
+      return options.formatters.toCssStringValue(variable.value, options);
     }
   }
   fail(`cannot format css value of type ${variable.type}`);

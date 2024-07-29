@@ -8,7 +8,6 @@ export type VariableObject = RecursiveObject<Variable<string>[]>;
 
 export interface Variable<T extends string> {
   path: string[];
-  collection: string;
   mode: string;
   type: T;
 }
@@ -27,62 +26,56 @@ export function isVariableArray(obj: unknown): obj is AnyVariable[] {
 
 export function valueOf(
   path: string[],
-  collection: string,
   mode: string,
   value: string,
 ): StringValue;
 
 export function valueOf(
   path: string[],
-  collection: string,
   mode: string,
   value: number,
 ): NumberValue;
 
 export function valueOf(
   path: string[],
-  collection: string,
   mode: string,
   value: boolean,
 ): BooleanValue;
 
 export function valueOf(
   path: string[],
-  collection: string,
   mode: string,
   value: ColorValue["value"],
 ): ColorValue;
 
 export function valueOf(
   path: string[],
-  collection: string,
   mode: string,
   value: AnyValue["value"],
 ): AnyValue {
   assert(value != null, "cannot make a value from a null object");
   if (typeof value === "string") {
-    return { path, collection, mode, value, type: "string" };
+    return { path, mode, value, type: "string" };
   }
   if (typeof value === "number") {
-    return { path, collection, mode, value, type: "number" };
+    return { path, mode, value, type: "number" };
   }
   if (typeof value === "boolean") {
-    return { path, collection, mode, value, type: "boolean" };
+    return { path, mode, value, type: "boolean" };
   }
   if (isRgbaObject(value)) {
-    return { path, collection, mode, value, type: "color" };
+    return { path, mode, value, type: "color" };
   }
   fail(`cannot make a value of type ${typeof value}`);
 }
 
 export function refOf(
   path: string[],
-  collection: string,
   mode: string,
   type: AnyRef["type"],
   ref: RefVariable<string>["ref"],
 ): AnyRef {
-  return { path, collection, mode, type, ref };
+  return { path, mode, type, ref };
 }
 
 export function isValueVariable<T extends string>(
@@ -155,6 +148,11 @@ export function isBooleanVariable(
   variable: Variable<string>,
 ): variable is BooleanValue | BooleanRef {
   return variable.type === "boolean";
+}
+
+export function getCollection({ path }: Variable<string>): string {
+  assert(path.length > 0, "variable must have at least one element in path");
+  return path[0];
 }
 
 export function forEachVariableArray(

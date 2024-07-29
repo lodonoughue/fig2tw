@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["./src/**/*.ts"],
+  "references": [{ "path": "../shared/tsconfig.build.json" }],
+  "compilerOptions": {
+    "target": "ES2019",
+    "lib": ["ES2019"],
+    "typeRoots": ["../../node_modules/@figma"],
+    "rootDir": "./src",
+    "outDir": "./build",
+    "declarationDir": "./build",
+    "tsBuildInfoFile": "./build/.tsbuildinfo"
+  }
+}

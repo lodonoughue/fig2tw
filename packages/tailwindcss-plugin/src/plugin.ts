@@ -1,22 +1,30 @@
-import { VariableObject, buildObject, deepMerge, range } from "@fig2tw/shared";
+import {
+  VariableObject,
+  buildObject,
+  deepMerge,
+  pick,
+  range,
+} from "@fig2tw/shared";
 import plugin from "tailwindcss/plugin.js";
-import { VariableSelector, configure } from "./configure.js";
+import { BuilderOptions, VariableSelector, configure } from "./configure.js";
 import {
   FormattersOptions,
+  formatOptionsOf,
   formattersOf,
-  toCssNumberPxValue,
 } from "./formatters.js";
 import { ConfigOptions, configOf } from "./config.js";
-import { CssBundle } from "./css.js";
+import { buildCssBundle, CssBundle } from "./css.js";
 import { ImportOptions, importVariables } from "./import.js";
 import { Config } from "tailwindcss";
 import { DeepPartial } from "./types.js";
 import { GridSystemOptions, gridSystemOf } from "./grid.js";
+import { buildTwConfig } from "./tw-config.js";
+import { ThemeConfig } from "tailwindcss/types/config.js";
 
 export function fig2twPlugin<T extends VariableObject = VariableObject>(
   opts: ImportOptions<T> & DefineOptions<T> & DeepPartial<PluginOptions>,
 ) {
-  const options = pluginOptionsOf(opts);
+  const options = { ...pluginOptionsOf(opts), buildCssBundle, buildTwConfig };
   const variables = importVariables<T>(opts);
   const configs = [
     configureRoot(options),
@@ -24,18 +32,21 @@ export function fig2twPlugin<T extends VariableObject = VariableObject>(
     configureColors(variables, options),
     configureSpacing(variables, options),
     configureSizes(variables, options),
-    configureRadius(variables, options),
+    configureBorderRadius(variables, options),
+    configureFontFamily(variables, options),
+    configureFontSize(variables, options),
     configureScreens(variables, options),
   ];
 
-  return plugin(
-    ({ addBase }) => addBase(deepMerge<CssBundle>(configs.map(toCssBundle))),
-    { theme: deepMerge<Config["theme"]>(configs.map(toTwConfig)) },
-  );
+  const cssConfig = deepMerge<CssBundle>(configs.map(toCssBundle));
+  const twConfig = deepMerge<Config["theme"]>(configs.map(toTwConfig));
+
+  /* v8 ignore next */
+  return plugin(({ addBase }) => addBase(cssConfig), { theme: twConfig });
 }
 
 function configureRoot({ config }: PluginOptions): ConfigurationResult {
-  const fontSize = toCssNumberPxValue(config.rootFontSizePx, { config });
+  const fontSize = `${config.rootFontSizePx}px`;
   return {
     cssBundle: { [config.rootSelector]: { fontSize } },
     twConfig: {},
@@ -57,7 +68,14 @@ function configureGridSystem({
     ...buildObject(
       [0.5, 1.5, 2.5, ...rangeOf(gridSystem)],
       it => String(it),
-      it => toCssNumberValue(it * gridSystem.unitPx, { config }),
+      it =>
+        toCssNumberValue(
+          it * gridSystem.unitPx,
+          formatOptionsOf({
+            context: "spacing",
+            config,
+          }),
+        ),
     ),
   } as Record<string, string>;
 
@@ -68,83 +86,229 @@ function configureGridSystem({
 }
 
 function rangeOf(gridSystem: NonNullable<PluginOptions["gridSystem"]>) {
-  console.log("gridSystem.maxUnit", gridSystem.maxUnit);
   return range(1, gridSystem.maxUnit + 1);
 }
 
 function configureColors<T extends VariableObject>(
   variables: T,
-  { defineColors, ...opts }: DefineOptions<T> & PluginOptions,
+  { colors, ...opts }: ConfigurationOptions<T>,
 ): ConfigurationResult {
-  const config = configure(variables, defineColors, opts);
-  return {
-    cssBundle: config.cssBundle,
-    twConfig: { colors: config.twConfig },
-  };
+  const { cssBundle, twConfig } = configure("colors", variables, colors, opts);
+  return { cssBundle, twConfig: toProperty(twConfig, "colors") };
 }
 
 function configureSpacing<T extends VariableObject>(
   variables: T,
-  { defineSpacing, ...options }: DefineOptions<T> & PluginOptions,
+  { spacing, ...options }: ConfigurationOptions<T>,
 ): ConfigurationResult {
-  const config = configure(variables, defineSpacing, options);
-  return {
-    cssBundle: config.cssBundle,
-    twConfig: { extend: { spacing: config.twConfig } },
-  };
+  const { cssBundle, twConfig } = configure(
+    "spacing",
+    variables,
+    spacing,
+    options,
+  );
+  return { cssBundle, twConfig: { extend: toProperty(twConfig, "spacing") } };
 }
 
 function configureSizes<T extends VariableObject>(
   variables: T,
-  { defineSizes, ...options }: DefineOptions<T> & PluginOptions,
+  { sizes, ...options }: ConfigurationOptions<T>,
 ): ConfigurationResult {
-  const config = configure(variables, defineSizes, options);
+  const { cssBundle, twConfig } = configure("size", variables, sizes, options);
   return {
-    cssBundle: config.cssBundle,
+    cssBundle,
     twConfig: {
       extend: {
-        width: config.twConfig,
-        minWidth: config.twConfig,
-        maxWidth: config.twConfig,
-        height: config.twConfig,
-        minHeight: config.twConfig,
-        maxHeight: config.twConfig,
+        ...toProperty(twConfig, "width"),
+        ...toProperty(twConfig, "minWidth"),
+        ...toProperty(twConfig, "maxWidth"),
+        ...toProperty(twConfig, "height"),
+        ...toProperty(twConfig, "minHeight"),
+        ...toProperty(twConfig, "maxHeight"),
       },
     },
   };
 }
 
-function configureRadius<T extends VariableObject>(
+function configureBorderRadius<T extends VariableObject>(
   variables: T,
-  { defineRadius, ...options }: DefineOptions<T> & PluginOptions,
+  { borderRadius, ...options }: ConfigurationOptions<T>,
 ): ConfigurationResult {
-  const config = configure(variables, defineRadius, options);
+  const { cssBundle, twConfig } = configure(
+    "borderRadius",
+    variables,
+    borderRadius,
+    options,
+  );
+  return { cssBundle, twConfig: toProperty(twConfig, "borderRadius") };
+}
+
+function configureFontFamily<T extends VariableObject>(
+  variables: T,
+  { fontFamily, ...options }: ConfigurationOptions<T>,
+): ConfigurationResult {
+  const { cssBundle, twConfig } = configure(
+    "fontFamily",
+    variables,
+    fontFamily,
+    options,
+  );
+  return { cssBundle, twConfig: toProperty(twConfig, "fontFamily") };
+}
+
+function configureFontSize<T extends VariableObject>(
+  variables: T,
+  {
+    fontSize,
+    lineHeight,
+    letterSpacing,
+    fontWeight,
+    ...options
+  }: ConfigurationOptions<T>,
+): ConfigurationResult {
+  const fontSizeConfig = configure("fontSize", variables, fontSize, options);
+  const fontSizeKeys = new Set(Object.keys(fontSizeConfig.twConfig));
+
+  const lineHeightConfig = configure(
+    "lineHeight",
+    variables,
+    lineHeight,
+    options,
+  );
+
+  const letterSpacingConfig = configure(
+    "letterSpacing",
+    variables,
+    letterSpacing,
+    options,
+  );
+
+  const fontWeightConfig = configure(
+    "fontWeight",
+    variables,
+    fontWeight,
+    options,
+  );
+
+  const cssBundle = deepMerge([
+    fontSizeConfig.cssBundle,
+    lineHeightConfig.cssBundle,
+    letterSpacingConfig.cssBundle,
+    fontWeightConfig.cssBundle,
+  ]);
+
+  const fontSizeTwConfig = formatTwFontSizeConfig(
+    fontSizeConfig.twConfig,
+    lineHeightConfig.twConfig,
+    letterSpacingConfig.twConfig,
+    fontWeightConfig.twConfig,
+  );
+
+  const lineHeightTwConfig = formatTwLineHeightConfig(
+    fontSizeKeys,
+    lineHeightConfig.twConfig,
+  );
+
+  const letterSpacingTwConfig = formatTwLetterSpacingConfig(
+    fontSizeKeys,
+    letterSpacingConfig.twConfig,
+  );
+
+  const fontWeightTwConfig = formatTwFontWeightConfig(
+    fontSizeKeys,
+    fontWeightConfig.twConfig,
+  );
+
   return {
-    cssBundle: config.cssBundle,
-    twConfig: { borderRadius: config.twConfig },
+    cssBundle,
+    twConfig: {
+      ...toProperty(fontSizeTwConfig, "fontSize"),
+      ...toProperty(lineHeightTwConfig, "lineHeight"),
+      ...toProperty(letterSpacingTwConfig, "letterSpacing"),
+      ...toProperty(fontWeightTwConfig, "fontWeight"),
+    },
   };
+}
+
+function formatTwFontSizeConfig(
+  fontSizeConfig: Record<string, string>,
+  lineHeightConfig: Record<string, string | undefined>,
+  letterSpacingConfig: Record<string, string | undefined>,
+  fontWeightConfig: Record<string, string | undefined>,
+): ThemeConfig["fontSize"] {
+  const result = {} as Record<string, FontSizeConfig>;
+
+  Object.keys(fontSizeConfig).forEach(key => {
+    result[key] = formatTwFontSize(
+      fontSizeConfig[key],
+      lineHeightConfig[key],
+      letterSpacingConfig[key],
+      fontWeightConfig[key],
+    );
+  });
+
+  return result;
+}
+
+function formatTwFontSize(
+  fontSize: string,
+  lineHeight: string | undefined,
+  letterSpacing: string | undefined,
+  fontWeight: string | undefined,
+): FontSizeConfig {
+  if (letterSpacing != null || fontWeight != null) {
+    return [fontSize, { lineHeight, letterSpacing, fontWeight }];
+  }
+  if (lineHeight != null) {
+    return [fontSize, lineHeight];
+  }
+  return fontSize;
+}
+
+function formatTwLineHeightConfig(
+  fontSizeConfigs: Set<string>,
+  lineHeightConfig: Record<string, string>,
+): ThemeConfig["lineHeight"] {
+  return pick(
+    lineHeightConfig,
+    Object.keys(lineHeightConfig).filter(it => !fontSizeConfigs.has(it)),
+    it => it,
+  );
+}
+
+function formatTwLetterSpacingConfig(
+  fontSizeConfigs: Set<string>,
+  letterSpacingConfig: Record<string, string>,
+): ThemeConfig["letterSpacing"] {
+  return pick(
+    letterSpacingConfig,
+    Object.keys(letterSpacingConfig).filter(it => !fontSizeConfigs.has(it)),
+    it => it,
+  );
+}
+
+function formatTwFontWeightConfig(
+  fontSizeConfigs: Set<string>,
+  fontWeightConfig: Record<string, string>,
+): ThemeConfig["fontWeight"] {
+  return pick(
+    fontWeightConfig,
+    Object.keys(fontWeightConfig).filter(it => !fontSizeConfigs.has(it)),
+    it => it,
+  );
 }
 
 function configureScreens<T extends VariableObject>(
   variables: T,
-  { defineScreens, ...opts }: DefineOptions<T> & PluginOptions,
+  { screens, ...options }: ConfigurationOptions<T>,
 ): ConfigurationResult {
-  const options = overrideWithCssNumberPxFormatter(opts);
-  const config = configure(variables, defineScreens, options);
-  return {
-    cssBundle: config.cssBundle,
-    twConfig: { borderRadius: config.twConfig },
-  };
-}
-
-function overrideWithCssNumberPxFormatter({
-  formatters,
-  ...options
-}: PluginOptions): PluginOptions {
-  return {
-    ...options,
-    formatters: { ...formatters, toCssNumberValue: toCssNumberPxValue },
-  };
+  const { cssBundle, twConfig } = configure(
+    "screens",
+    variables,
+    screens,
+    options,
+  );
+  return { cssBundle, twConfig: toProperty(twConfig, "screens") };
 }
 
 function toCssBundle({ cssBundle }: ConfigurationResult) {
@@ -154,6 +318,20 @@ function toCssBundle({ cssBundle }: ConfigurationResult) {
 function toTwConfig({ twConfig }: ConfigurationResult) {
   return twConfig;
 }
+
+function toProperty<T extends object, P extends keyof ThemeConfig>(
+  twConfig: T,
+  prop: P,
+): { [K in P]: T } | object {
+  if (Object.keys(twConfig).length > 0) {
+    return { [prop]: twConfig };
+  }
+  return {};
+}
+
+type ConfigurationOptions<T extends VariableObject> = DefineOptions<T> &
+  PluginOptions &
+  BuilderOptions;
 
 interface ConfigurationResult {
   cssBundle: CssBundle;
@@ -166,11 +344,16 @@ interface PluginOptions
     FormattersOptions {}
 
 interface DefineOptions<T extends VariableObject> {
-  defineColors?: VariableSelector<T>;
-  defineScreens?: VariableSelector<T>;
-  defineSpacing?: VariableSelector<T>;
-  defineSizes?: VariableSelector<T>;
-  defineRadius?: VariableSelector<T>;
+  colors?: VariableSelector<T>;
+  screens?: VariableSelector<T>;
+  spacing?: VariableSelector<T>;
+  sizes?: VariableSelector<T>;
+  borderRadius?: VariableSelector<T>;
+  fontFamily?: VariableSelector<T>;
+  fontSize?: VariableSelector<T>;
+  lineHeight?: VariableSelector<T>;
+  letterSpacing?: VariableSelector<T>;
+  fontWeight?: VariableSelector<T>;
 }
 
 export function pluginOptionsOf<T extends DeepPartial<PluginOptions>>({
@@ -186,3 +369,15 @@ export function pluginOptionsOf<T extends DeepPartial<PluginOptions>>({
     ...overrides,
   } as T & PluginOptions;
 }
+
+type FontSizeConfig =
+  | string
+  | [fontSize: string, lineHeight: string]
+  | [
+      fontSize: string,
+      configuration: Partial<{
+        lineHeight: string;
+        letterSpacing: string;
+        fontWeight: string | number;
+      }>,
+    ];

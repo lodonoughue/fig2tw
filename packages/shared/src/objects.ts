@@ -17,12 +17,15 @@ export function deepMerge<T extends RecursiveObject<BuiltIns> | undefined>(
   objects: Partial<T>[],
 ): T {
   return objects.reduce<T>((accumulator, current) => {
-    return mergeObject(accumulator, current as RecursiveObject<BuiltIns>);
+    return mergeObject(
+      accumulator,
+      current as RecursiveObject<BuiltIns> | undefined,
+    );
   }, {} as T);
 }
 
 export function buildObject<T, R>(
-  source: T[],
+  source: readonly T[],
   keySelector: (src: T) => string | string[],
   valueSelector: (src: T) => R,
 ) {
@@ -34,9 +37,9 @@ export function buildObject<T, R>(
 
 function mergeObject<T extends RecursiveObject<BuiltIns> | undefined>(
   target: T,
-  object: RecursiveObject<BuiltIns>,
+  object: RecursiveObject<BuiltIns> | undefined,
 ): T {
-  if (target == null) return target;
+  if (target == null || object == null) return target;
 
   Object.entries(object).forEach(([key, value]) => {
     if (

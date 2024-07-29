@@ -1,6 +1,5 @@
-import { VariableObject, assert } from "@fig2tw/shared";
-import { fail } from "node:assert";
-import fs from "node:fs";
+import { VariableObject, assert, fail } from "@fig2tw/shared";
+import { existsSync, readFileSync } from "node:fs";
 
 export type ImportOptions<T extends VariableObject> =
   | { variables: T; importPath?: undefined }
@@ -16,6 +15,6 @@ export function importVariables<T extends VariableObject>({
 }
 
 function readVariables<T extends VariableObject>(importPath: string): T {
-  assert(fs.existsSync(importPath), "importPath file not found");
-  return JSON.parse(fs.readFileSync(importPath, "utf-8"));
+  assert(existsSync(importPath), "importPath file not found");
+  return JSON.parse(readFileSync(importPath, "utf-8"));
 }

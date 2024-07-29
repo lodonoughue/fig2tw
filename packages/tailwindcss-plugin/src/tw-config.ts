@@ -7,11 +7,12 @@ import {
   isNumberVariable,
   isStringVariable,
 } from "@fig2tw/shared";
-import { FormatOptions, FormattersOptions } from "./formatters.js";
+import { Context, FormatOptions, FormattersOptions } from "./formatters.js";
 import { ConfigOptions } from "./config.js";
 import { fail } from "assert";
 
 export function buildTwConfig(
+  context: Context,
   selectedVariables: Variable<string>[] | VariableObject,
   opts: ConfigOptions & FormattersOptions,
 ): Record<string, string> {
@@ -23,6 +24,7 @@ export function buildTwConfig(
     const firstVariable = variable[0];
     const formatOptions = {
       ...opts,
+      context,
       selectorPath: path,
       variablePath: firstVariable.path,
     } satisfies FormatOptions;

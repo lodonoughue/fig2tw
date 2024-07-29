@@ -1,79 +1,135 @@
-import { VariableObject, valueOf } from "@fig2tw/shared";
+import {
+  BooleanValue,
+  ColorValue,
+  NumberValue,
+  RefVariable,
+  StringValue,
+  fixtures,
+} from "@fig2tw/shared";
 import { buildCssBundle } from "./css.js";
 import { describe, expect, it } from "vitest";
 import { pluginOptionsOf } from "./plugin.js";
 import { FormatOptions } from "./formatters.js";
 
-const opts = pluginOptionsOf();
+function toCssColorValue({ r, g, b, a }: ColorValue["value"]) {
+  return `mocked: ${r} ${g} ${b} ${a}`;
+}
+
+function toCssStringValue(value: StringValue["value"]) {
+  return `mocked: ${value}`;
+}
+
+function toCssBooleanValue(value: BooleanValue["value"]) {
+  return `mocked: ${value}`;
+}
+
+function toCssNumberValue(value: NumberValue["value"]) {
+  return `mocked: ${value}`;
+}
+
+function toCssRefValue(ref: RefVariable<string>["ref"]) {
+  return `mocked: [${ref}]`;
+}
+
+const opts = pluginOptionsOf({
+  formatters: {
+    toCssColorValue,
+    toCssStringValue,
+    toCssBooleanValue,
+    toCssNumberValue,
+    toCssRefValue,
+  },
+});
 
 describe("buildCssBundle", () => {
   it("should return an empty bundle if variable object is empty", () => {
-    const result = buildCssBundle({}, {}, opts);
+    const result = buildCssBundle("unknown", {}, {}, opts);
     expect(result).toStrictEqual({});
   });
 
   it("should build expected css model", () => {
-    const fooPath = ["Foo"];
-    const barAPath = ["Bar", "Bar A"];
-    const barBPath = ["Bar", "Bar B"];
-    const bazPath = ["Baz"];
-    const variables = {
-      foo: [
-        valueOf(fooPath, "Mode", "Light", "foo-light"),
-        valueOf(fooPath, "Mode", "Dark", "foo-dark"),
-      ],
-      bar: {
-        "Bar A": [
-          valueOf(barAPath, "Mode", "Light", "bar-a-light"),
-          valueOf(barAPath, "Mode", "Dark", "bar-a-dark"),
-        ],
-        "Bar B": [
-          valueOf(barBPath, "Mode", "Light", "bar-b-light"),
-          valueOf(barBPath, "Mode", "Dark", "bar-b-dark"),
-        ],
-      },
-      baz: [valueOf(bazPath, "Size", "Regular", "baz-regular")],
-    } satisfies VariableObject;
+    const selection = fixtures.pickCollections([
+      "colors",
+      "strings",
+      "numbers",
+      "booleans",
+      "refs",
+    ]);
 
-    const result = buildCssBundle({}, variables, opts);
+    const result = buildCssBundle(
+      "unknown",
+      fixtures.variables,
+      selection,
+      opts,
+    );
     expect(result).toStrictEqual({
-      ":root, :root.mode__light": {
-        "--foo": "foo-light",
-        "--bar-bar-a": "bar-a-light",
-        "--bar-bar-b": "bar-b-light",
+      ":root, :root.colors__light": {
+        "--colors-red": toCssColorValue(fixtures.lightRed),
+        "--colors-blue": toCssColorValue(fixtures.lightBlue),
       },
-      ":root.mode__dark": {
-        "--foo": "foo-dark",
-        "--bar-bar-a": "bar-a-dark",
-        "--bar-bar-b": "bar-b-dark",
+      ":root.colors__dark": {
+        "--colors-red": toCssColorValue(fixtures.darkRed),
+        "--colors-blue": toCssColorValue(fixtures.darkBlue),
       },
-      ":root, :root.size__regular": {
-        "--baz": "baz-regular",
+      ":root, :root.strings__single": {
+        "--strings-foo": toCssStringValue(fixtures.singleFoo),
+        "--strings-bar": toCssStringValue(fixtures.singleBar),
+      },
+      ":root.strings__double": {
+        "--strings-foo": toCssStringValue(fixtures.doubleFoo),
+        "--strings-bar": toCssStringValue(fixtures.doubleBar),
+      },
+      ":root, :root.numbers__regular": {
+        "--numbers-three": toCssNumberValue(fixtures.regularThree),
+        "--numbers-five": toCssNumberValue(fixtures.regularFive),
+      },
+      ":root.numbers__powered": {
+        "--numbers-three": toCssNumberValue(fixtures.poweredThree),
+        "--numbers-five": toCssNumberValue(fixtures.poweredFive),
+      },
+      ":root, :root.booleans__regular": {
+        "--booleans-truthy": toCssBooleanValue(fixtures.regularTruthy),
+        "--booleans-falsy": toCssBooleanValue(fixtures.regularFalsy),
+      },
+      ":root.booleans__inverse": {
+        "--booleans-truthy": toCssBooleanValue(fixtures.inverseTruthy),
+        "--booleans-falsy": toCssBooleanValue(fixtures.inverseFalsy),
+      },
+      ":root, :root.refs__first": {
+        "--refs-colors": toCssRefValue(fixtures.redRef),
+        "--refs-strings": toCssRefValue(fixtures.fooRef),
+        "--refs-numbers": toCssRefValue(fixtures.threeRef),
+        "--refs-booleans": toCssRefValue(fixtures.truthyRef),
+        "--refs-refs": toCssRefValue(fixtures.refColorRef),
+      },
+      ":root.refs__second": {
+        "--refs-colors": toCssRefValue(fixtures.blueRef),
+        "--refs-strings": toCssRefValue(fixtures.barRef),
+        "--refs-numbers": toCssRefValue(fixtures.fiveRef),
+        "--refs-booleans": toCssRefValue(fixtures.falsyRef),
+        "--refs-refs": toCssRefValue(fixtures.refStringRef),
       },
     });
   });
 
   it("should use formatters from options", () => {
-    const variables = {
-      foo: [valueOf([], "foo", "bar", 42)],
-      bar: [valueOf([], "foo", "bar", "value")],
-      baz: [valueOf([], "foo", "bar", true)],
-      buz: [valueOf([], "foo", "bar", { r: 0, g: 0, b: 0, a: 0 })],
-    };
+    const selection = fixtures.pickCollections(["types"]);
 
     const toCssSelector = (_: string, classname: string) =>
-      `mocked-selector__${classname}`;
-    const toCssVariableProperty = ({ selectorPath }: FormatOptions) =>
-      `mocked-variable-${selectorPath![0]}`;
-    const toCssClass = () => "mocked-class";
+      `:mocked-selector${classname}`;
+    const toCssClass = () => ".mocked-class";
+    const toCssVariableProperty = ({ variablePath }: FormatOptions) =>
+      `--mocked-${variablePath[1]}`;
     const toCssNumberValue = () => "mocked-number";
     const toCssStringValue = () => "mocked-string";
     const toCssBooleanValue = () => "mocked-boolean";
     const toCssColorValue = () => "mocked-color";
+    const toCssRefValue = () => "mocked-ref";
 
     const result = buildCssBundle(
-      {},
-      variables,
+      "unknown",
+      fixtures.variables,
+      selection.types,
       pluginOptionsOf({
         formatters: {
           toCssSelector,
@@ -83,17 +139,26 @@ describe("buildCssBundle", () => {
           toCssStringValue,
           toCssBooleanValue,
           toCssColorValue,
+          toCssRefValue,
         },
       }),
     );
 
     expect(result).toStrictEqual({
-      "mocked-selector__mocked-class": {
-        "mocked-variable-foo": "mocked-number",
-        "mocked-variable-bar": "mocked-string",
-        "mocked-variable-baz": "mocked-boolean",
-        "mocked-variable-buz": "mocked-color",
+      ":mocked-selector.mocked-class": {
+        "--mocked-color": "mocked-color",
+        "--mocked-string": "mocked-string",
+        "--mocked-number": "mocked-number",
+        "--mocked-boolean": "mocked-boolean",
+        "--mocked-ref": "mocked-ref",
       },
     });
+  });
+
+  it("should throw when formatting unknown types of variables", () => {
+    const selection = fixtures.pickCollections(["faulty"]);
+    expect(() =>
+      buildCssBundle("unknown", fixtures.variables, selection, opts),
+    ).toThrow("cannot format css value of type");
   });
 });

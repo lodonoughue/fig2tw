@@ -2,13 +2,14 @@
   "name": "@fig2tw/shared",
   "version": "1.0.0",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
     "lint": "eslint . && prettier --check src/ --config ../../.prettierrc.js --log-level warn",
-    "dev": "tsc --watch --project tsconfig.build.json",
-    "build": "tsc --project tsconfig.build.json",
-    "test": "vitest run"
+    "dev": "tsc --build tsconfig.build.json --watch",
+    "build": "tsc --build tsconfig.build.json",
+    "test": "vitest run",
+    "test:coverage": "vitest watch --coverage"
   },
   "exports": {
     ".": {

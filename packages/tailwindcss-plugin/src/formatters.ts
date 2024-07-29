@@ -7,6 +7,7 @@ import {
 } from "@fig2tw/shared";
 import { ConfigOptions, configOf } from "./config.js";
 import { DeepPartial } from "./types.js";
+import { ThemeConfig } from "tailwindcss/types/config.js";
 
 export function toCssSelectorFactory() {
   const primaryModes = new Map<string, string>();
@@ -30,36 +31,47 @@ export function toCssVariableProperty({ variablePath }: FormatOptions) {
   return `--${toKebabProperty(variablePath)}`;
 }
 
-export function toCssColorValue({ value }: ColorValue, _: FormatOptions) {
-  const { r, g, b } = value;
+export function toCssColorValue(
+  { r, g, b }: ColorValue["value"],
+  _: FormatOptions,
+) {
   return `${r} ${g} ${b}`;
 }
 
-export function toCssStringValue({ value }: StringValue, _: FormatOptions) {
+export function toCssStringValue(
+  value: StringValue["value"],
+  _: FormatOptions,
+) {
   return value;
 }
 
-export function toCssNumberRemValue(
-  value: NumberValue | number,
-  { config }: ConfigOptions,
+export function toCssNumberValue(
+  value: NumberValue["value"],
+  { context, config }: FormatOptions,
 ) {
-  const val = typeof value === "number" ? value : value.value;
-  return `${val / config.rootFontSizePx}rem`;
+  if (context === "screens") {
+    return `${value}px`;
+  }
+  if (context === "fontWeight") {
+    return String(value);
+  }
+  if (context === "letterSpacing") {
+    return `${value / config.rootFontSizePx}em`;
+  }
+  return `${value / config.rootFontSizePx}rem`;
 }
 
-export function toCssNumberPxValue(
-  value: NumberValue | number,
-  _: ConfigOptions,
+export function toCssBooleanValue(
+  value: BooleanValue["value"],
+  _: FormatOptions,
 ) {
-  const val = typeof value === "number" ? value : value.value;
-  return `${val}px`;
-}
-
-function toCssBooleanValue({ value }: BooleanValue, _: FormatOptions) {
   return String(value);
 }
 
-function toCssRefValue({ ref }: RefVariable<string>, options: FormatOptions) {
+export function toCssRefValue(
+  ref: RefVariable<string>["ref"],
+  options: FormatOptions,
+) {
   const { toCssVariableProperty } = options.formatters;
   return `var(${toCssVariableProperty({ ...options, variablePath: ref })})`;
 }
@@ -68,27 +80,27 @@ export function toCssClass(collection: string, mode: string) {
   return `${toKebabCase(collection)}__${toKebabCase(mode)}`;
 }
 
-function toTwProperty({ selectorPath }: FormatOptions) {
+export function toTwProperty({ selectorPath }: FormatOptions) {
   return toKebabProperty(selectorPath);
 }
 
-function toTwColorValue(cssVariable: string, _: FormatOptions) {
+export function toTwColorValue(cssVariable: string, _: FormatOptions) {
   return `rgb(var(${cssVariable}) / <alpha-value>)`;
 }
 
-function toTwStringValue(cssVariable: string, _: FormatOptions) {
+export function toTwStringValue(cssVariable: string, _: FormatOptions) {
   return `var(${cssVariable})`;
 }
 
-function toTwNumberValue(cssVariable: string, _: FormatOptions) {
+export function toTwNumberValue(cssVariable: string, _: FormatOptions) {
   return `var(${cssVariable})`;
 }
 
-function toTwBooleanValue(cssVariable: string, _: FormatOptions) {
+export function toTwBooleanValue(cssVariable: string, _: FormatOptions) {
   return `var(${cssVariable})`;
 }
 
-function toTwRefValue(cssVariable: string, _: FormatOptions) {
+export function toTwRefValue(cssVariable: string, _: FormatOptions) {
   return `var(${cssVariable})`;
 }
 
@@ -110,7 +122,7 @@ interface Options {
   toCssClass: typeof toCssClass;
   toCssColorValue: typeof toCssColorValue;
   toCssStringValue: typeof toCssStringValue;
-  toCssNumberValue: typeof toCssNumberRemValue;
+  toCssNumberValue: typeof toCssNumberValue;
   toCssBooleanValue: typeof toCssBooleanValue;
   toCssRefValue: typeof toCssRefValue;
   toTwProperty: typeof toTwProperty;
@@ -132,7 +144,7 @@ export function formattersOf(overrides: Partial<Options> = {}): Options {
     toCssClass,
     toCssColorValue,
     toCssStringValue,
-    toCssNumberValue: toCssNumberRemValue,
+    toCssNumberValue,
     toCssBooleanValue,
     toCssRefValue,
     toTwProperty,
@@ -146,11 +158,13 @@ export function formattersOf(overrides: Partial<Options> = {}): Options {
 }
 
 export interface FormatOptions extends ConfigOptions, FormattersOptions {
+  context: Context;
   selectorPath: string[];
   variablePath: string[];
 }
 
 export function formatOptionsOf({
+  context = "unknown",
   config,
   formatters,
   ...rest
@@ -158,8 +172,17 @@ export function formatOptionsOf({
   return {
     config: configOf(config),
     formatters: formattersOf(formatters),
+    context,
     selectorPath: [],
     variablePath: [],
     ...rest,
   };
 }
+
+export type Context =
+  | Exclude<
+      keyof ThemeConfig,
+      "width" | "minWidth" | "maxWidth" | "height" | "maxHeight" | "minHeight"
+    >
+  | "size"
+  | "unknown";
