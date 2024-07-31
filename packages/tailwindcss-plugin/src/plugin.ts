@@ -1,23 +1,12 @@
-import {
-  VariableObject,
-  buildObject,
-  deepMerge,
-  pick,
-  range,
-} from "@fig2tw/shared";
+import { VariableObject, deepMerge, pick } from "@fig2tw/shared";
 import plugin from "tailwindcss/plugin.js";
 import { BuilderOptions, VariableSelector, configure } from "./configure.js";
-import {
-  FormattersOptions,
-  formatOptionsOf,
-  formattersOf,
-} from "./formatters.js";
+import { FormattersOptions, formattersOf } from "./formatters.js";
 import { ConfigOptions, configOf } from "./config.js";
 import { buildCssBundle, CssBundle } from "./css.js";
 import { ImportOptions, importVariables } from "./import.js";
 import { Config } from "tailwindcss";
 import { DeepPartial } from "./types.js";
-import { GridSystemOptions, gridSystemOf } from "./grid.js";
 import { buildTwConfig } from "./tw-config.js";
 import { ThemeConfig } from "tailwindcss/types/config.js";
 
@@ -28,7 +17,6 @@ export function fig2twPlugin<T extends VariableObject = VariableObject>(
   const variables = importVariables<T>(opts);
   const configs = [
     configureRoot(options),
-    configureGridSystem(options),
     configureColors(variables, options),
     configureSpacing(variables, options),
     configureSizes(variables, options),
@@ -51,42 +39,6 @@ function configureRoot({ config }: PluginOptions): ConfigurationResult {
     cssBundle: { [config.rootSelector]: { fontSize } },
     twConfig: {},
   };
-}
-
-function configureGridSystem({
-  config,
-  gridSystem,
-  formatters: { toCssNumberValue },
-}: PluginOptions): ConfigurationResult {
-  if (gridSystem == null) {
-    return { cssBundle: {}, twConfig: {} };
-  }
-
-  const spacing = {
-    "0": "0px",
-    px: "1px",
-    ...buildObject(
-      [0.5, 1.5, 2.5, ...rangeOf(gridSystem)],
-      it => String(it),
-      it =>
-        toCssNumberValue(
-          it * gridSystem.unitPx,
-          formatOptionsOf({
-            context: "spacing",
-            config,
-          }),
-        ),
-    ),
-  } as Record<string, string>;
-
-  return {
-    cssBundle: {},
-    twConfig: { spacing },
-  };
-}
-
-function rangeOf(gridSystem: NonNullable<PluginOptions["gridSystem"]>) {
-  return range(1, gridSystem.maxUnit + 1);
 }
 
 function configureColors<T extends VariableObject>(
@@ -338,10 +290,7 @@ interface ConfigurationResult {
   twConfig: Config["theme"];
 }
 
-interface PluginOptions
-  extends ConfigOptions,
-    GridSystemOptions,
-    FormattersOptions {}
+interface PluginOptions extends ConfigOptions, FormattersOptions {}
 
 interface DefineOptions<T extends VariableObject> {
   colors?: VariableSelector<T>;
@@ -358,13 +307,11 @@ interface DefineOptions<T extends VariableObject> {
 
 export function pluginOptionsOf<T extends DeepPartial<PluginOptions>>({
   config,
-  gridSystem,
   formatters,
   ...overrides
 }: DeepPartial<PluginOptions> = {}): T & PluginOptions {
   return {
     config: configOf(config),
-    gridSystem: gridSystemOf(gridSystem),
     formatters: formattersOf(formatters),
     ...overrides,
   } as T & PluginOptions;

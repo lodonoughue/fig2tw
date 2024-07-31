@@ -11,9 +11,9 @@ export default function LinkGitHub({ className, href }: Props) {
       target="_blank"
       className={clsx(
         className,
-        "group relative flex w-4 h-4 justify-center items-center outline-none",
+        "group relative flex w-8 h-8 justify-center items-center outline-none",
       )}>
-      <GitHub className="text-on-primary h-3 w-3 z-10" />
+      <GitHub className="text-on-primary h-6 w-6 z-10" />
       <Shape
         type="primary"
         className={clsx(

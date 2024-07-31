@@ -10,8 +10,8 @@ export default function Skeleton({ index, className }: Props) {
       aria-hidden
       className={clsx(
         className,
-        styles[index % styles.length],
-        "rounded-sm h-2 flex bg-on-surface",
+        //styles[index % styles.length],
+        "rounded-sm h-2 flex w-1/3 bg-blue-500",
       )}
     />
   );

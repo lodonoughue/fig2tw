@@ -20,7 +20,7 @@ export default function Button({ className, children, type, ...rest }: Props) {
       className={clsx(
         className,
         styles[type],
-        "flex flex-row px-4 py-1 font-heading text-body flex-grow-0 rounded-full",
+        "flex flex-row px-md py-xs font-heading text-body flex-grow-0 rounded-full",
         "outline outline-offset-0 outline-0 transition-all",
         "focus:outline-2 focus:outline-offset-2",
         "focus:rounded-tr-none focus:rounded-bl-none hover:rounded-tr-none hover:rounded-bl-none",

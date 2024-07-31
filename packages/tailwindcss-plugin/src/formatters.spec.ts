@@ -170,8 +170,8 @@ describe("toCssRefValue", () => {
 
 describe("toCssClass", () => {
   it("should return a class with the pattern collection__mode", () => {
-    const result = toCssClass("Foo Bar", "Baz Buz");
-    expect(result).toBe("foo-bar__baz-buz");
+    const result = toCssClass("Foo Bar Baz", "Baz Bar Foo");
+    expect(result).toBe("foo-bar-baz__baz-bar-foo");
   });
 });
 

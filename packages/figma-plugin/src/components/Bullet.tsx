@@ -17,8 +17,8 @@ export default function Bullet({ className, index }: Props) {
       className={clsx(
         className,
         styles[index % styles.length],
-        "rounded-full w-3 h-3 flex flex-grow-0 flex-shrink-0",
-        "justify-center items-center before:w-1 before:h-1 before:rounded-full",
+        "rounded-full w-6 h-6 flex flex-grow-0 flex-shrink-0",
+        "justify-center items-center before:w-2 before:h-2 before:rounded-full",
       )}
     />
   );

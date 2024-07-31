@@ -109,7 +109,7 @@ function toKebabProperty(path: string[]): string {
 }
 
 function toKebabCase(value: string) {
-  return value.toLowerCase().replace(" ", "-");
+  return value.toLowerCase().replaceAll(" ", "-");
 }
 
 function escapeSpecialCharacters(value: string): string {

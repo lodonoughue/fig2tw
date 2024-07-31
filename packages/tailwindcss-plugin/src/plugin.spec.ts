@@ -9,42 +9,6 @@ import {
 } from "./formatters.js";
 
 describe("fig2twPlugin", () => {
-  describe("gridSystem", () => {
-    it("should configure default spacing system when not configured", () => {
-      const result = fig2twPlugin({
-        variables: fixtures.variables,
-      });
-
-      expect(result.config).toStrictEqual({
-        theme: { extend: {} },
-      });
-    });
-
-    it("should configure spacing based no grid system configuration", () => {
-      const result = fig2twPlugin({
-        variables: fixtures.variables,
-        gridSystem: { unitPx: 16, maxUnit: 5 },
-      });
-
-      expect(result.config?.theme).not.toBeUndefined();
-      expect(result.config!.theme).toStrictEqual({
-        extend: {},
-        spacing: {
-          "0": "0px",
-          px: "1px",
-          "0.5": "0.5rem",
-          "1": "1rem",
-          "1.5": "1.5rem",
-          "2": "2rem",
-          "2.5": "2.5rem",
-          "3": "3rem",
-          "4": "4rem",
-          "5": "5rem",
-        },
-      });
-    });
-  });
-
   describe("colors", () => {
     it("should configure colors based on color selection", () => {
       const options = formatOptionsOf();
