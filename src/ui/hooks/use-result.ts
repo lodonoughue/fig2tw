@@ -7,23 +7,32 @@ export function useResult<TRequest extends Channel, TResult extends Channel>(
   requestChannel: TRequest["name"],
   ...args: Parameters<TRequest["handler"]>
 ) {
-  const [result, setResult] = useState<
-    Parameters<TResult["handler"]>[0] | null
-  >(null);
+  const [{ result, isLoading }, setState] = useState<State<TResult>>({
+    result: null,
+    isLoading: true,
+  });
 
   const reload = useCallback(() => {
-    setResult(null);
+    setState({ result: null, isLoading: true });
     broker.post<TRequest>(requestChannel, ...args);
   }, [broker, requestChannel, ...args]);
 
   useEffect(
-    () => broker.subscribe<TResult>(resultChannel, setResult),
-    [broker, resultChannel, setResult],
+    () =>
+      broker.subscribe<TResult>(resultChannel, result =>
+        setState({ isLoading: false, result }),
+      ),
+    [broker, resultChannel, setState],
   );
 
   useEffect(() => {
     reload();
   }, [reload]);
 
-  return { result, reload };
+  return { result, isLoading, reload };
+}
+
+interface State<TResult extends Channel> {
+  result: Parameters<TResult["handler"]>[0] | null;
+  isLoading: boolean;
 }

@@ -242,7 +242,7 @@ function isDefaultMode(collection: Collection, mode: string) {
   return collection.defaultMode === mode;
 }
 
-function isBlank(value: string | undefined) {
+export function isBlank(value: string | undefined): value is undefined | "" {
   return value == null || value.trim().length === 0;
 }
 

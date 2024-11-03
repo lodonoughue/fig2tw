@@ -14,11 +14,11 @@ import { Config, Unit } from "@common/config";
 import RadioGroup from "@ui/components/radio-group";
 import withController from "@ui/hocs/with-controller";
 import { useForm } from "react-hook-form";
-import { formatKebabCase } from "@common/formatters";
+import { formatKebabCase, isBlank } from "@common/formatters";
 
 export default function ConfigSection({ className, broker }: SectionProps) {
   const { control, onChange } = useConfigForm();
-  const scopes = useScopes(broker);
+  const { scopes, isLoading } = useScopes(broker);
 
   return (
     <Section className={className} direction="row">
@@ -67,6 +67,11 @@ export default function ConfigSection({ className, broker }: SectionProps) {
             "Numbers are converted to units (px, em or rem) based on their \
             scopes. When multiple scopes are applied to a number variable, \
             they should have the same unit configuration."
+          }
+          alertWhenEmpty={
+            isLoading
+              ? undefined
+              : "Define number variables to configure units."
           }>
           {scopes.has("all-numbers") ? (
             <Field label="All number scopes" labelSize="small">
@@ -155,13 +160,13 @@ export default function ConfigSection({ className, broker }: SectionProps) {
 }
 
 function useScopes(broker: MessageBroker) {
-  const { result } = useResult<ScopeRequest, ScopeResult>(
+  const { result, isLoading } = useResult<ScopeRequest, ScopeResult>(
     broker,
     "SCOPE_RESULT",
     "SCOPE_REQUEST",
   );
 
-  return new Set(result || []);
+  return { scopes: new Set(result || []), isLoading };
 }
 
 function useConfigForm() {
@@ -210,7 +215,7 @@ function toFormState(config: Config) {
 }
 
 function toTrimKeywords(value: string | undefined): string[] {
-  if (value == null || value.trim().length < 1) return [];
+  if (isBlank(value)) return [];
 
   const keywords = value.split(",");
   return keywords.map(formatKebabCase);
