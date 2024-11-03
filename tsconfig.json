@@ -1,0 +1,25 @@
+{
+  "include": ["./src/**/*"],
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "strict": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["./node_modules/@figma", "./node_modules/@types"],
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "declaration": false,
+    "declarationMap": false,
+    "composite": false,
+    "jsx": "react",
+    "paths": {
+      "@plugin/*": ["./src/plugin/*"],
+      "@ui/*": ["./src/ui/*"],
+      "@common/*": ["./src/common/*"]
+    }
+  }
+}

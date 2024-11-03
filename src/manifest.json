@@ -1,0 +1,11 @@
+{
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "id": "1376255637027661681",
+  "name": "fig2tw",
+  "main": "./main.js",
+  "ui": "./index.html",
+  "networkAccess": {
+    "allowedDomains": ["https://fonts.gstatic.com"]
+  }
+}
