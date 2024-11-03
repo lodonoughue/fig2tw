@@ -5,6 +5,7 @@
   "name": "fig2tw",
   "main": "./main.js",
   "ui": "./index.html",
+  "documentAccess": "dynamic-page",
   "networkAccess": {
     "allowedDomains": ["https://fonts.gstatic.com"]
   }

@@ -68,7 +68,7 @@ export default function ConfigSection({ className, broker }: SectionProps) {
             scopes. When multiple scopes are applied to a number variable, \
             they should have the same unit configuration."
           }
-          alertWhenEmpty={
+          emptyWarning={
             isLoading
               ? undefined
               : "Define number variables to configure units."
