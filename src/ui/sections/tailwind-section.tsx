@@ -21,7 +21,7 @@ export default function TailwindSection({ className, broker }: SectionProps) {
       <Result
         className="grow"
         onReload={reload}
-        onDownload={it => downloadFile("fig2tw-plugin.ts", it)}>
+        onDownload={it => downloadFile("tailwind.fig2tw.ts", it)}>
         {result}
       </Result>
     </Section>

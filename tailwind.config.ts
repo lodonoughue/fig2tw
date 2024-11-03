@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import fig2twPlugin from "./fig2tw-plugin";
+import fig2twPlugin from "./tailwind.fig2tw";
 
 //const textStyles = ["Heading", "Headline", "Body", "Code"] as const;
 
