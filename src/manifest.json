@@ -2,7 +2,7 @@
   "api": "1.0.0",
   "editorType": ["figma"],
   "id": "1376255637027661681",
-  "name": "fig2tw",
+  "name": "fig2tw - Convert variables to Tailwind, CSS or JSON",
   "main": "./main.js",
   "ui": "./index.html",
   "documentAccess": "dynamic-page",
