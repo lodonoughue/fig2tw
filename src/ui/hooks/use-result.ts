@@ -17,13 +17,12 @@ export function useResult<TRequest extends Channel, TResult extends Channel>(
     broker.post<TRequest>(requestChannel, ...args);
   }, [broker, requestChannel, ...args]);
 
-  useEffect(
-    () =>
-      broker.subscribe<TResult>(resultChannel, result =>
-        setState({ isLoading: false, result }),
-      ),
-    [broker, resultChannel, setState],
-  );
+  useEffect(() => {
+    const unsubscribe = broker.subscribe<TResult>(resultChannel, result =>
+      setState({ isLoading: false, result }),
+    );
+    return () => unsubscribe();
+  }, [broker, resultChannel, setState]);
 
   useEffect(() => {
     reload();

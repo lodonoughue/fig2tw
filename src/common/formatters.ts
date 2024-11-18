@@ -45,7 +45,7 @@ export const formatCssNumber = ((
   opts: Options,
 ) => {
   if (isAliasValue(value)) {
-    return formatCssVariableRef(variable, opts);
+    return formatCssVariableRef(value, variable, opts);
   }
 
   if (isNumberValue(value)) {
@@ -79,7 +79,7 @@ export const formatCssString = ((
   opts: Options,
 ) => {
   if (isAliasValue(value)) {
-    return formatCssVariableRef(variable, opts);
+    return formatCssVariableRef(value, variable, opts);
   }
 
   if (isStringValue(value)) {
@@ -101,7 +101,7 @@ export const formatCssColorHex = ((
   opts: Options,
 ) => {
   if (isAliasValue(value)) {
-    return formatCssVariableRef(variable, opts);
+    return formatCssVariableRef(value, variable, opts);
   }
 
   if (isColorValue(value)) {
@@ -117,7 +117,7 @@ export const formatCssColorTwRgb = ((
   opts: Options,
 ) => {
   if (isAliasValue(value)) {
-    return formatCssVariableRef(variable, opts);
+    return formatCssVariableRef(value, variable, opts);
   }
 
   if (isColorValue(value)) {
@@ -151,11 +151,15 @@ export function formatCssVariableName(variable: AnyVariable | AliasValue) {
   return `--${formatKebabCase(key)}`;
 }
 
-export function formatCssVariableRef(variable: AnyVariable, opts: Options) {
-  const cssVariable = formatCssVariableName(variable);
+export function formatCssVariableRef(
+  alias: AliasValue,
+  variable: AnyVariable,
+  opts: Options,
+) {
+  const cssVariable = formatCssVariableName(alias);
 
   if (!opts.config.hasDefaultValues) {
-    return `var(${variable})`;
+    return `var(${cssVariable})`;
   }
 
   const formattedDefaultValue = formatCssVariableRefDefaultValue(

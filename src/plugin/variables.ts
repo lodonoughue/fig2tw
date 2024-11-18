@@ -31,6 +31,8 @@ import {
   NumberValue,
   StringValue,
   BooleanValue,
+  toColorHexPart,
+  toColorRgbaPart,
 } from "@common/variables";
 
 const CSS_SUPPORTED_TYPES: string[] = [
@@ -239,30 +241,20 @@ function toScopes<T extends string>(
 }
 
 function toHex(value: RGB | RGBA): string {
-  const red = toHexPart(value.r);
-  const green = toHexPart(value.g);
-  const blue = toHexPart(value.b);
+  const red = toColorHexPart(value.r);
+  const green = toColorHexPart(value.g);
+  const blue = toColorHexPart(value.b);
   const alphaValue = "a" in value ? value.a : 1;
-  const alpha = alphaValue !== 1 ? toHexPart(alphaValue) : "";
+  const alpha = alphaValue !== 1 ? toColorHexPart(alphaValue) : "";
   return `#${red}${green}${blue}${alpha}`;
 }
 
-function toHexPart(value: number): string {
-  return Math.round(value * 255)
-    .toString(16)
-    .padStart(2, "0");
-}
-
 function toRgba(value: RGB | RGBA): [number, number, number, number] {
-  const red = toRgbaPart(value.r);
-  const green = toRgbaPart(value.g);
-  const blue = toRgbaPart(value.b);
+  const red = toColorRgbaPart(value.r);
+  const green = toColorRgbaPart(value.g);
+  const blue = toColorRgbaPart(value.b);
   const alpha = "a" in value ? value.a : 1;
   return [red, green, blue, alpha];
-}
-
-function toRgbaPart(value: number): number {
-  return Math.round(value * 255);
 }
 
 function toNumberValue(figmaValue: VariableValue): NumberValue {

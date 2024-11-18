@@ -61,36 +61,44 @@ export type AnyVariable =
   | BooleanVariable
   | ColorVariable;
 
-export function isAliasValue(value: AnyValue): value is AliasValue {
+export function isAliasValue(value: Value): value is AliasValue {
   return value.type === "alias";
 }
 
-export function isColorValue(value: AnyValue): value is ColorValue {
+export function isColorValue(value: Value): value is ColorValue {
   return value.type === "color";
 }
 
-export function isNumberValue(value: AnyValue): value is NumberValue {
+export function isNumberValue(value: Value): value is NumberValue {
   return value.type === "number";
 }
 
-export function isStringValue(value: AnyValue): value is StringValue {
+export function isStringValue(value: Value): value is StringValue {
   return value.type === "string";
 }
 
-export function isColorVariable(value: AnyVariable): value is ColorVariable {
+export function isColorVariable(value: Variable): value is ColorVariable {
   return value.type === "color";
 }
 
-export function isNumberVariable(value: AnyVariable): value is NumberVariable {
+export function isNumberVariable(value: Variable): value is NumberVariable {
   return value.type === "number";
 }
 
-export function isBooleanVariable(
-  value: AnyVariable,
-): value is BooleanVariable {
+export function isBooleanVariable(value: Variable): value is BooleanVariable {
   return value.type === "boolean";
 }
 
-export function isStringVariable(value: AnyVariable): value is StringVariable {
+export function isStringVariable(value: Variable): value is StringVariable {
   return value.type === "string";
+}
+
+export function toColorHexPart(value: number): string {
+  return Math.round(value * 255)
+    .toString(16)
+    .padStart(2, "0");
+}
+
+export function toColorRgbaPart(value: number): number {
+  return Math.round(value * 255);
 }

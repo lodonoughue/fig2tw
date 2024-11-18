@@ -1,6 +1,7 @@
 import { Config } from "@common/config";
 import { loadVariables } from "./variables";
 import {
+  AliasValue,
   AnyScope,
   AnyVariable,
   ColorScope,
@@ -415,7 +416,11 @@ function trimKeywords(config: Config) {
 }
 
 function formatTwReference(variable: AnyVariable, opts: Options) {
-  return formatCssVariableRef(variable, opts);
+  const alias = {
+    type: "alias",
+    value: { key: variable.key },
+  } satisfies AliasValue;
+  return formatCssVariableRef(alias, variable, opts);
 }
 
 function formatTwColorReference(variable: ColorVariable, opts: Options) {
@@ -428,39 +433,45 @@ function formatTwFontSizeConfig(
   opts: Options,
 ) {
   if (!some(lineHeight, letterSpacing, fontWeight)) {
-    // returns tailwind simple configuration value, like
-    // "fontSize": {
-    //   "sm": "var(--typography-font-size-sm, .8em)",
-    // }
+    /**
+     * returns tailwind simple configuration value, like
+     * "fontSize": {
+     *   "sm": "var(--typography-font-size-sm, .8em)",
+     * }
+     */
     return formatTwReference(fontSize, opts);
   }
 
   if (lineHeight != null && !some(letterSpacing, fontWeight)) {
-    // returns tailwind configuration for fontSize and lineHeight, like
-    // "fontSize": {
-    //   "sm": [
-    //     "var(--typography-font-size-sm, .8em)",
-    //     "var(--typography-line-height-sm, 1em)",
-    //   ],
-    // }
+    /**
+     * returns tailwind configuration for fontSize and lineHeight, like
+     * "fontSize": {
+     *   "sm": [
+     *     "var(--typography-font-size-sm, .8em)",
+     *     "var(--typography-line-height-sm, 1em)",
+     *   ],
+     * }
+     */
     return [
       formatTwReference(fontSize, opts),
       formatTwReference(lineHeight, opts),
     ];
   }
 
-  // returns complete tailwind configuration for fontSize, lineHeight,
-  // letterSpacing and fontWeight like
-  // "fontSize": {
-  //   "sm": [
-  //     "var(--typography-font-size-sm, .8em)",
-  //     {
-  //       "lineHeight": "var(--typography-line-height-sm, 1em)",
-  //       "letterSpacing": "var(--typography-letter-spacing-sm, 1px)",
-  //       "fontWeight": "var(--typography-font-weight-sm, 500)",
-  //     },
-  //   ],
-  // }
+  /**
+   * returns complete tailwind configuration for fontSize, lineHeight,
+   *  letterSpacing and fontWeight like
+   *  "fontSize": {
+   *    "sm": [
+   *      "var(--typography-font-size-sm, .8em)",
+   *      {
+   *        "lineHeight": "var(--typography-line-height-sm, 1em)",
+   *        "letterSpacing": "var(--typography-letter-spacing-sm, 1px)",
+   *        "fontWeight": "var(--typography-font-weight-sm, 500)",
+   *      },
+   *    ],
+   *  }
+   */
   return [
     formatTwReference(fontSize, opts),
     chain({

@@ -1,7 +1,8 @@
 import { assert, fail } from "@common/assert";
 
 interface Handler {
-  (...args: never[]): void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (...args: any[]): void;
 }
 
 type Subscriptions = Record<string, Handler[] | undefined>;
@@ -9,6 +10,11 @@ type Subscriptions = Record<string, Handler[] | undefined>;
 export type Channel = {
   name: string;
   handler: Handler;
+};
+
+export type Message = [string, ...args: Parameters<Handler>];
+export type PluginEventData = {
+  pluginMessage: unknown;
 };
 
 function _subscribe<T extends Channel>(
@@ -29,18 +35,19 @@ function _unsubscribe<T extends Channel>(
   subscriptions[name] = handlers.filter(h => h !== handler);
 }
 
-function _isMessage(value: unknown): value is [string, ...args: never[]] {
+function _isMessage(value: unknown): value is Message {
   return Array.isArray(value) && typeof value[0] === "string";
+}
+
+function _isPluginEventData(value: unknown): value is PluginEventData {
+  return value != null && typeof value === "object" && "pluginMessage" in value;
 }
 
 function _getHandlers(subscriptions: Subscriptions, name: string): Handler[] {
   return (subscriptions[name] as Handler[]) || [];
 }
 
-function _dispatchMessage(
-  subscriptions: Subscriptions,
-  message: [string, ...args: never[]],
-) {
+function _dispatchMessage(subscriptions: Subscriptions, message: Message) {
   const [name, ...args] = message;
   const handlers = _getHandlers(subscriptions, name);
   assert(handlers.length > 0, `No handlers found for message "${name}"`);
@@ -78,8 +85,10 @@ class PluginMessageBroker implements MessageBroker {
 
 class UiMessageBroker implements MessageBroker {
   constructor(private readonly subscriptions: Subscriptions = {}) {
-    window.onmessage = function (event) {
-      const data = event.data.pluginMessage;
+    window.onmessage = function (event: MessageEvent<unknown>) {
+      const eventData = event.data;
+      assert(_isPluginEventData(eventData), "UI received a malformed event");
+      const data = eventData.pluginMessage;
       assert(_isMessage(data), `UI received a malformed message: ${data}`);
       _dispatchMessage(subscriptions, data);
     };

@@ -13,6 +13,9 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["src/**/*.spec.ts"],
+    include: ["src/**/*.spec.{ts,tsx}"],
+    coverage: {
+      include: ["src/**/*.{ts,tsx}"],
+    },
   },
 });

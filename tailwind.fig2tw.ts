@@ -38,7 +38,8 @@ const figConfig = {
     "xs": "var(--density-radius-xs, 0.25rem)"
   },
   "figma:size": {
-    "content-max-width": "var(--density-size-content-max-width, 45rem)"
+    "content-max-width": "var(--density-size-content-max-width, 45rem)",
+    "input-height": "var(--density-size-input-height, 3rem)"
   },
   "figma:gap": {
     "xs": "var(--density-space-xs, 0.25rem)",
@@ -46,6 +47,9 @@ const figConfig = {
     "md": "var(--density-space-md, 2rem)",
     "lg": "var(--density-space-lg, 4rem)",
     "xl": "var(--density-space-xl, 8rem)"
+  },
+  "figma:stroke-width": {
+    "regular": "var(--density-stroke-regular, 2px)"
   },
   "figma:font-family": {
     "heading": "var(--typography-heading-font-family, Outfit)",
@@ -94,12 +98,12 @@ const figConfig = {
       "var(--typography-label-small-font-size, 0.875rem)",
       {
         "lineHeight": "var(--typography-label-small-line-height, 1rem)",
-        "letterSpacing": "var(--typography-label-small-letter-spacing, 0.33000001311302185px)"
+        "letterSpacing": "var(--typography-label-small-letter-spacing, 0.25px)"
       }
     ]
   },
   "figma:letter-spacing": {
-    "wide": "var(--typography-letter-spacing-wide, 0.33000001311302185px)"
+    "wide": "var(--typography-letter-spacing-wide, 0.25px)"
   },
   "figma:font-weight": {
     "bold": "var(--typography-font-weight-bold, 800)",
@@ -136,6 +140,16 @@ const twConfig = {
   "scrollMargin": ({ theme }) => ({ ...theme("spacing"), ...theme("figma:gap") }),
   "scrollPadding": ({ theme }) => ({ ...theme("spacing"), ...theme("figma:gap") }),
   "borderSpacing": ({ theme }) => ({ ...theme("spacing"), ...theme("figma:gap") }),
+  "strokeWidth": ({ theme }) => ({ ...theme("figma:stroke-width") }),
+  "outlineWidth": ({ theme }) => ({ ...theme("figma:stroke-width") }),
+  "borderWidth": ({ theme }) => ({
+    ...theme("figma:stroke-width"),
+    "DEFAULT": "1px",
+  }),
+  "ringWidth": ({ theme }) => ({
+    ...theme("figma:stroke-width"),
+    "DEFAULT": "3px",
+  }),
   "fontFamily": ({ theme }) => ({ ...theme("figma:font-family") }),
   "fontSize": ({ theme }) => ({ ...theme("figma:font-size") }),
   "letterSpacing": ({ theme }) => ({ ...theme("figma:letter-spacing") }),
@@ -205,28 +219,28 @@ const cssConfig = {
     "--palette-neutral-neutral-50": "253 252 253"
   },
   ":root, .scheme-light": {
-    "--scheme-surface": "var(--scheme-surface, 248 246 248)",
-    "--scheme-on-surface": "var(--scheme-on-surface, 55 24 99)",
-    "--scheme-primary-container": "var(--scheme-primary-container, 247 243 247)",
-    "--scheme-secondary-container-variant": "var(--scheme-secondary-container-variant, 194 217 255)",
-    "--scheme-tertiary-variant": "var(--scheme-tertiary-variant, 252 120 57)",
-    "--scheme-tertiary-container-variant": "var(--scheme-tertiary-container-variant, 254 203 178)",
-    "--scheme-on-primary": "var(--scheme-on-primary, 247 243 247)",
-    "--scheme-on-secondary": "var(--scheme-on-secondary, 235 243 255)",
-    "--scheme-on-tertiary": "var(--scheme-on-tertiary, 255 238 230)",
-    "--scheme-primary": "var(--scheme-primary, 131 56 236)",
-    "--scheme-secondary": "var(--scheme-secondary, 57 134 255)",
-    "--scheme-tertiary": "var(--scheme-tertiary, 251 86 7)",
-    "--scheme-container": "var(--scheme-container, 253 252 253)",
-    "--scheme-on-container": "var(--scheme-on-container, 55 24 99)",
-    "--scheme-primary-container-variant": "var(--scheme-primary-container-variant, 232 221 233)",
-    "--scheme-on-primary-container": "var(--scheme-on-primary-container, 55 24 99)",
-    "--scheme-on-secondary-container": "var(--scheme-on-secondary-container, 55 24 99)",
-    "--scheme-secondary-container": "var(--scheme-secondary-container, 235 243 255)",
-    "--scheme-tertiary-container": "var(--scheme-tertiary-container, 255 238 230)",
-    "--scheme-on-tertiary-container": "var(--scheme-on-tertiary-container, 55 24 99)",
-    "--scheme-secondary-variant": "var(--scheme-secondary-variant, 97 158 255)",
-    "--scheme-primary-variant": "var(--scheme-primary-variant, 156 96 240)"
+    "--scheme-surface": "var(--palette-neutral-neutral-100, 248 246 248)",
+    "--scheme-on-surface": "var(--palette-neutral-neutral-900, 55 24 99)",
+    "--scheme-primary-container": "var(--palette-violet-violet-50, 247 243 247)",
+    "--scheme-secondary-container-variant": "var(--palette-blue-blue-100, 194 217 255)",
+    "--scheme-tertiary-variant": "var(--palette-orange-orange-400, 252 120 57)",
+    "--scheme-tertiary-container-variant": "var(--palette-orange-orange-100, 254 203 178)",
+    "--scheme-on-primary": "var(--palette-violet-violet-50, 247 243 247)",
+    "--scheme-on-secondary": "var(--palette-blue-blue-50, 235 243 255)",
+    "--scheme-on-tertiary": "var(--palette-orange-orange-50, 255 238 230)",
+    "--scheme-primary": "var(--palette-violet-violet-500, 131 56 236)",
+    "--scheme-secondary": "var(--palette-blue-blue-500, 57 134 255)",
+    "--scheme-tertiary": "var(--palette-orange-orange-500, 251 86 7)",
+    "--scheme-container": "var(--palette-neutral-neutral-50, 253 252 253)",
+    "--scheme-on-container": "var(--palette-neutral-neutral-900, 55 24 99)",
+    "--scheme-primary-container-variant": "var(--palette-violet-violet-100, 232 221 233)",
+    "--scheme-on-primary-container": "var(--palette-neutral-neutral-900, 55 24 99)",
+    "--scheme-on-secondary-container": "var(--palette-neutral-neutral-900, 55 24 99)",
+    "--scheme-secondary-container": "var(--palette-blue-blue-50, 235 243 255)",
+    "--scheme-tertiary-container": "var(--palette-orange-orange-50, 255 238 230)",
+    "--scheme-on-tertiary-container": "var(--palette-neutral-neutral-900, 55 24 99)",
+    "--scheme-secondary-variant": "var(--palette-blue-blue-400, 97 158 255)",
+    "--scheme-primary-variant": "var(--palette-violet-violet-400, 156 96 240)"
   },
   ":root, .density-regular": {
     "--density-size-content-max-width": "45rem",
@@ -238,7 +252,9 @@ const cssConfig = {
     "--density-radius-md": "0.75rem",
     "--density-radius-full": "624.9375rem",
     "--density-radius-sm": "0.5rem",
-    "--density-radius-xs": "0.25rem"
+    "--density-radius-xs": "0.25rem",
+    "--density-stroke-regular": "2px",
+    "--density-size-input-height": "3rem"
   },
   ":root, .typography-regular": {
     "--typography-heading-font-family": "Outfit",
@@ -257,9 +273,9 @@ const cssConfig = {
     "--typography-label-medium-font-size": "1rem",
     "--typography-label-medium-line-height": "1.25rem",
     "--typography-headline-letter-spacing": "1px",
-    "--typography-heading-font-weight": "var(--typography-heading-font-weight, 800)",
+    "--typography-heading-font-weight": "var(--typography-font-weight-bold, 800)",
     "--typography-font-weight-bold": "800",
-    "--typography-letter-spacing-wide": "0.33000001311302185px",
+    "--typography-letter-spacing-wide": "0.25px",
     "--typography-body-small-font-size": "0.875rem",
     "--typography-body-small-line-height": "1rem",
     "--typography-body-small-font-family": "Outfit",
@@ -267,8 +283,8 @@ const cssConfig = {
     "--typography-label-small-font-family": "Outfit",
     "--typography-label-small-font-size": "0.875rem",
     "--typography-label-small-line-height": "1rem",
-    "--typography-body-small-font-weight": "var(--typography-body-small-font-weight, 300)",
-    "--typography-label-small-letter-spacing": "var(--typography-label-small-letter-spacing, 0.33000001311302185px)"
+    "--typography-body-small-font-weight": "var(--typography-font-weight-light, 300)",
+    "--typography-label-small-letter-spacing": "var(--typography-letter-spacing-wide, 0.25px)"
   }
 };
 
