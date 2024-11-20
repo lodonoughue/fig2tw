@@ -6,5 +6,5 @@ export function assert(
 }
 
 export function fail(...errorMessages: string[]): never {
-  throw new Error(`fig2tw: ${errorMessages.join(" ")}`);
+  throw new Error(["fig2tw:", ...errorMessages].join(" "));
 }

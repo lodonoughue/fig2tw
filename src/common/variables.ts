@@ -85,10 +85,6 @@ export function isNumberVariable(value: Variable): value is NumberVariable {
   return value.type === "number";
 }
 
-export function isBooleanVariable(value: Variable): value is BooleanVariable {
-  return value.type === "boolean";
-}
-
 export function isStringVariable(value: Variable): value is StringVariable {
   return value.type === "string";
 }

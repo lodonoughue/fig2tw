@@ -206,3 +206,18 @@ function inferVariableDefaultValue<V extends Variable>(
   }
   return result;
 }
+
+export const fixtures = {
+  createConfig,
+  createUnitsConfig,
+  createOptions,
+  createFormattersOption,
+  createAliasValue,
+  createNumberValue,
+  createStringValue,
+  createColorValue,
+  createNumberVariable,
+  createStringVariable,
+  createColorVariable,
+  createVariable,
+};
