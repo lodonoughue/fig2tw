@@ -42,7 +42,7 @@ export default function App() {
             {tabs.map(name => (
               <Tab
                 key={name}
-                isActive={activeTab === name}
+                isSelected={activeTab === name}
                 onClick={() => setActiveTab(name)}>
                 {name}
               </Tab>

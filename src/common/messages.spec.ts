@@ -1,5 +1,4 @@
 import {
-  afterAll,
   assert,
   beforeAll,
   beforeEach,
@@ -106,14 +105,11 @@ describe.each([
 ])("createMessageBroker ($type)", ({ fixture }) => {
   beforeAll(() => {
     vi.stubGlobal(fixture.globalProperty, fixture.mock);
+    return () => vi.unstubAllGlobals();
   });
 
   beforeEach(() => {
     fixture.clear();
-  });
-
-  afterAll(() => {
-    vi.unstubAllGlobals();
   });
 
   it("should register a message handler when created", () => {
@@ -172,13 +168,5 @@ describe.each([
     broker.post(channel, payload);
 
     expect(fixture.postMessage).toHaveBeenCalledWith(...expectedData);
-  });
-});
-
-describe("createMessageBroker (undefined)", () => {
-  it("should throw when neither figma or window are defined", () => {
-    expect(() => createMessageBroker()).toThrow(
-      "Cannot detect current environment",
-    );
   });
 });

@@ -4,8 +4,7 @@ import React, {
   createContext,
   useContext,
 } from "react";
-import { PropsWithClassName } from "@ui/types";
-import { PropsWithChildren, useId } from "react";
+import { useId } from "react";
 import clsx from "clsx";
 import Label from "./label";
 import { assert } from "@common/assert";
@@ -16,10 +15,14 @@ export default function Field({
   label,
   labelSize,
   description,
+  ...rest
 }: Props) {
   const id = useId();
   return (
-    <label htmlFor={id} className={clsx(className, "flex flex-col gap-xs")}>
+    <label
+      {...rest}
+      htmlFor={id}
+      className={clsx(className, "flex flex-col gap-xs")}>
       <Label size={labelSize}>{label}</Label>
       {description != null ? (
         <span className="font-body-small text-body-small">{description}</span>
@@ -46,14 +49,12 @@ export function withFieldContext<P extends object>(
   };
 }
 
-interface Props extends PropsWithClassName, PropsWithChildren {
+interface Props extends Omit<ComponentProps<"label">, "htmlFor"> {
   label: string;
-  labelSize?: LabelProps["size"];
+  labelSize?: ComponentProps<typeof Label>["size"];
   description?: string;
 }
 
 interface FieldContext {
   id: string;
 }
-
-type LabelProps = ComponentProps<typeof Label>;

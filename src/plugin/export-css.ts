@@ -85,6 +85,10 @@ function formatCssValue(variable: AnyVariable, mode: string, opts: Options) {
   if (isNumberVariable(variable)) {
     const value = variable.valuesByMode[mode];
     return formatters.formatNumber(value, variable, opts);
+
+    // This is unreachable because of the `isSupportedByJson` check. It is kept
+    // here in case the supported types change.
+    /* v8 ignore next 4 */
   }
 
   fail(`Unsupported variable type: ${variable.type}`);

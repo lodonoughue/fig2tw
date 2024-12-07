@@ -7,6 +7,8 @@ import { Options } from "./formatters";
 import { vi } from "vitest";
 import {
   AliasValue,
+  BooleanValue,
+  BooleanVariable,
   Collection,
   ColorValue,
   ColorVariable,
@@ -20,24 +22,27 @@ import {
   Variable,
 } from "./variables";
 
-export function createConfig(partial: Partial<Config> = {}): Config {
-  return { ...defaultConfig, ...partial };
+function createConfig(partial: Partial<Config> = {}): Config {
+  const trimKeywords = defaultConfig.trimKeywords.toSorted(
+    (a, b) => b.length - a.length,
+  );
+  return { ...defaultConfig, trimKeywords, ...partial };
 }
 
-export function createUnitsConfig(
+function createUnitsConfig(
   partial: Partial<Config["units"]> = {},
 ): Config["units"] {
   return { ...defaultConfig.units, ...partial };
 }
 
-export function createOptions({
+function createOptions({
   config = createConfig(),
   formatters = createFormattersOption(),
 }: Partial<Options> = {}): Options {
   return { config, formatters };
 }
 
-export function createFormattersOption({
+function createFormattersOption({
   formatColor = vi.fn().mockReturnValue("formatted-color"),
   formatNumber = vi.fn().mockReturnValue("formatted-number"),
   formatString = vi.fn().mockReturnValue("formatted-string"),
@@ -45,28 +50,35 @@ export function createFormattersOption({
   return { formatColor, formatNumber, formatString };
 }
 
-export function createAliasValue({
+function createAliasValue({
   type = "alias",
   value = { key: "Collection/Foo" },
 }: Partial<AliasValue> = {}): AliasValue {
   return { type, value };
 }
 
-export function createNumberValue({
+function createNumberValue({
   type = "number",
   value = 42,
 }: Partial<NumberValue> = {}): NumberValue {
   return { type, value };
 }
 
-export function createStringValue({
+function createStringValue({
   type = "string",
   value = "foo",
 }: Partial<StringValue> = {}): StringValue {
   return { type, value };
 }
 
-export function createColorValue({
+function createBooleanValue({
+  type = "boolean",
+  value = true,
+}: Partial<BooleanValue> = {}): BooleanValue {
+  return { type, value };
+}
+
+function createColorValue({
   type = "color",
   value,
 }: Partial<Value<"color", Partial<ColorValue["value"]>>> = {}): ColorValue {
@@ -103,7 +115,7 @@ function inferColorValueRgba(
   return [red, green, blue, alpha];
 }
 
-export function createNumberVariable(partial: Partial<NumberVariable> = {}) {
+function createNumberVariable(partial: Partial<NumberVariable> = {}) {
   return createVariable<NumberVariable>(createNumberValue, {
     name: inferVariableName(partial.key) ?? "Number/Foo",
     type: "number",
@@ -112,7 +124,7 @@ export function createNumberVariable(partial: Partial<NumberVariable> = {}) {
   });
 }
 
-export function createStringVariable(partial: Partial<StringVariable> = {}) {
+function createStringVariable(partial: Partial<StringVariable> = {}) {
   return createVariable<StringVariable>(createStringValue, {
     name: inferVariableName(partial.key) ?? "String/Foo",
     type: "string",
@@ -121,7 +133,7 @@ export function createStringVariable(partial: Partial<StringVariable> = {}) {
   });
 }
 
-export function createColorVariable(partial: Partial<ColorVariable> = {}) {
+function createColorVariable(partial: Partial<ColorVariable> = {}) {
   return createVariable<ColorVariable>(createColorValue, {
     name: inferVariableName(partial.key) ?? "Color/Foo",
     type: "color",
@@ -130,7 +142,16 @@ export function createColorVariable(partial: Partial<ColorVariable> = {}) {
   });
 }
 
-export function createVariable<V extends Variable>(
+function createBooleanVariable(partial: Partial<BooleanVariable> = {}) {
+  return createVariable<BooleanVariable>(createBooleanValue, {
+    name: inferVariableName(partial.key) ?? "Boolean/Foo",
+    type: "boolean",
+    scopes: ["all-booleans"],
+    ...partial,
+  });
+}
+
+function createVariable<V extends Variable>(
   valueFactory: () => V["defaultValue"],
   {
     type = "never",
@@ -164,6 +185,16 @@ export function createVariable<V extends Variable>(
     collection,
     scopes,
   } as V;
+}
+
+function createCollection({
+  name = "Collection",
+  modes,
+  defaultMode,
+}: Partial<Collection> = {}): Collection {
+  modes ??= [defaultMode ?? "light", "dark"];
+  defaultMode ??= modes[0];
+  return { name, modes, defaultMode };
 }
 
 function inferVariableKey(name: string, collection?: Collection): string {
@@ -216,8 +247,11 @@ export const fixtures = {
   createNumberValue,
   createStringValue,
   createColorValue,
+  createBooleanValue,
   createNumberVariable,
   createStringVariable,
   createColorVariable,
+  createBooleanVariable,
   createVariable,
+  createCollection,
 };

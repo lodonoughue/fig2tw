@@ -1,16 +1,11 @@
 import React, { ComponentProps } from "react";
 import { clsx } from "clsx";
 
-export default function Link({
-  className,
-  href,
-  ...rest
-}: ComponentProps<"a">) {
+export default function Link({ className, ...rest }: ComponentProps<"a">) {
   return (
     <a
-      {...rest}
-      href={href}
       target="_blank"
+      {...rest}
       className={clsx(
         className,
         "text-on-surface text-label-small font-label-small underline rounded-xs",

@@ -1,11 +1,9 @@
-import React, { PropsWithChildren } from "react";
+import React, { ComponentProps } from "react";
 import { clsx } from "clsx";
-import { PropsWithClassName } from "@ui/types";
 
-export default function HeaderLinkContainer({ className, children }: Props) {
-  return (
-    <div className={clsx(className, "flex flex-col gap-sm")}>{children}</div>
-  );
+export default function HeaderLinkContainer({
+  className,
+  ...rest
+}: ComponentProps<"div">) {
+  return <div {...rest} className={clsx(className, "flex flex-col gap-sm")} />;
 }
-
-interface Props extends PropsWithChildren, PropsWithClassName {}

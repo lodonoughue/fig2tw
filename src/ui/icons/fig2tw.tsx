@@ -1,12 +1,8 @@
-import React from "react";
-import { PropsWithClassName } from "@ui/types";
+import React, { ComponentProps } from "react";
 
-export default function Fig2Tw({ className }: PropsWithClassName) {
+export default function Fig2Tw(props: Props) {
   return (
-    <svg
-      viewBox="0 0 48 48"
-      className={className}
-      xmlns="http://www.w3.org/2000/svg">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" {...props}>
       <path
         d="M0 24C0 10.7452 10.7452 0 24 0L48 0V0C48 13.2548 37.2548 24 24 24H0V24Z"
         className="fill-secondary"
@@ -18,3 +14,5 @@ export default function Fig2Tw({ className }: PropsWithClassName) {
     </svg>
   );
 }
+
+type Props = Omit<ComponentProps<"svg">, "children">;

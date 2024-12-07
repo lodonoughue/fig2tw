@@ -1,10 +1,13 @@
-import React, { PropsWithChildren } from "react";
-import { PropsWithClassName } from "@ui/types";
+import React, { ComponentProps } from "react";
 import clsx from "clsx";
 
-export default function WarningBox({ className, children }: Props) {
+export default function WarningBox({
+  className,
+  children,
+  ...rest
+}: ComponentProps<"div">) {
   return (
-    <div className={clsx(className, "bg-container p-xs rounded-sm")}>
+    <div {...rest} className={clsx(className, "bg-container p-xs rounded-sm")}>
       <p
         className={clsx(
           "bg-tertiary-container text-on-tertiary-container p-sm",
@@ -15,5 +18,3 @@ export default function WarningBox({ className, children }: Props) {
     </div>
   );
 }
-
-interface Props extends PropsWithClassName, PropsWithChildren {}

@@ -1,10 +1,9 @@
+import React, { ComponentProps } from "react";
 import clsx from "clsx";
-import React from "react";
-import { ComponentProps } from "react";
 
 export default function Label({ className, size = "regular", ...rest }: Props) {
   return (
-    <span className={clsx(className, SIZE_CLASS_MAPPING[size])} {...rest} />
+    <span {...rest} className={clsx(className, SIZE_CLASS_MAPPING[size])} />
   );
 }
 

@@ -1,13 +1,11 @@
-import React, { PropsWithChildren } from "react";
-import { PropsWithClassName } from "@ui/types";
+import React, { ComponentProps } from "react";
 import clsx from "clsx";
 
-export default function Column({ className, children }: Props) {
+export default function Column({ className, ...rest }: ComponentProps<"div">) {
   return (
-    <div className={clsx(className, "flex flex-col grow basis-0 gap-md")}>
-      {children}
-    </div>
+    <div
+      {...rest}
+      className={clsx(className, "flex flex-col grow basis-0 gap-md")}
+    />
   );
 }
-
-interface Props extends PropsWithClassName, PropsWithChildren {}

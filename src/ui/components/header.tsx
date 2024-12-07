@@ -1,11 +1,9 @@
-import React, { PropsWithChildren } from "react";
+import React, { ComponentProps } from "react";
 import { clsx } from "clsx";
-import { PropsWithClassName } from "@ui/types";
 
-export default function Header({ className, children }: Props) {
-  return (
-    <header className={clsx(className, "px-md flex gap-sm")}>{children}</header>
-  );
+export default function Header({
+  className,
+  ...rest
+}: ComponentProps<"header">) {
+  return <header {...rest} className={clsx(className, "px-md flex gap-sm")} />;
 }
-
-interface Props extends PropsWithChildren, PropsWithClassName {}

@@ -1,21 +1,20 @@
-import React, { PropsWithChildren } from "react";
-import { PropsWithClassName } from "@ui/types";
+import React, { ComponentProps } from "react";
 import clsx from "clsx";
 
 export default function Section({
   className,
-  children,
   direction = "col",
+  ...rest
 }: Props) {
   return (
     <div
+      {...rest}
       className={clsx(
         className,
         "flex grow px-md gap-md",
         DIRECTION_CLASS_MAPPING[direction],
-      )}>
-      {children}
-    </div>
+      )}
+    />
   );
 }
 
@@ -24,6 +23,6 @@ const DIRECTION_CLASS_MAPPING = {
   col: "flex-col",
 } as const;
 
-interface Props extends PropsWithChildren, PropsWithClassName {
+interface Props extends ComponentProps<"div"> {
   direction?: "row" | "col";
 }

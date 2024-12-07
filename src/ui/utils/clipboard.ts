@@ -27,7 +27,11 @@ async function unsecuredCopyToClipboard(value: string) {
     }
   } finally {
     textArea.remove();
-    if (activeElement instanceof HTMLElement) {
+    if (
+      activeElement != null &&
+      "focus" in activeElement &&
+      typeof activeElement.focus === "function"
+    ) {
       activeElement.focus();
     }
   }

@@ -1,14 +1,15 @@
-import React, { PropsWithChildren } from "react";
+import React, { ComponentProps } from "react";
 import clsx from "clsx";
-import { PropsWithClassName } from "@ui/types";
 
-export default function TabContainer({ className, children }: Props) {
+export default function TabContainer({
+  className,
+  ...rest
+}: ComponentProps<"div">) {
   return (
     <div
-      className={clsx(className, "flex flex-row p-xs rounded-sm bg-container")}>
-      {children}
-    </div>
+      role="tablist"
+      {...rest}
+      className={clsx(className, "flex flex-row p-xs rounded-sm bg-container")}
+    />
   );
 }
-
-interface Props extends PropsWithClassName, PropsWithChildren {}

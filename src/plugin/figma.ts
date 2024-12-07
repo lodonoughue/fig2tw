@@ -17,12 +17,22 @@ export function findDefaultValue(
   collections: FigmaCollection[],
   variables: FigmaVariable[],
   variable: FigmaVariable,
+  // Used to detect cycles
+  aliasVisited: string[] = [],
 ): Exclude<VariableValue, VariableAlias> {
   const value = getDefaultModeValue(collections, variable);
 
   if (isFigmaVariableAlias(value)) {
+    assert(
+      !aliasVisited.includes(value.id),
+      `Cycle detected: ${aliasVisited.join(" -> ")} -> ${value.id}`,
+    );
+
     const variable = findVariableById(variables, value.id);
-    return findDefaultValue(collections, variables, variable);
+    return findDefaultValue(collections, variables, variable, [
+      ...aliasVisited,
+      value.id,
+    ]);
   }
 
   return value;
@@ -107,8 +117,4 @@ export function isFigmaStringValue(value: VariableValue): value is string {
 
 export function isFigmaBooleanValue(value: VariableValue): value is boolean {
   return typeof value === "boolean";
-}
-
-export function isVariableNumber(value: VariableValue): value is number {
-  return typeof value === "number";
 }

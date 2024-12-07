@@ -16,7 +16,7 @@ import {
   isFigmaVariableAlias,
   getFigmaVariables,
   getDefaultMode,
-} from "./figma";
+} from "@plugin/figma";
 import {
   AnyVariable,
   Collection,
@@ -83,7 +83,10 @@ export async function loadVariables(): Promise<AnyVariable[]> {
   const { variables, collections } = await getFigmaVariables();
 
   const resolvers = {
-    resolveCollection: withArgs(findCollectionById, collections),
+    // Memoize resolveCollection to keep referential equality
+    resolveCollection: memoize((collectionId: string) =>
+      toCollection(findCollectionById(collections, collectionId)),
+    ),
     resolveMode: withArgs(findModeById, collections),
     resolveVariable: withArgs(findVariableById, variables),
     resolveDefaultValue: withArgs(findDefaultValue, collections, variables),
@@ -94,9 +97,7 @@ export async function loadVariables(): Promise<AnyVariable[]> {
     .map(it => toAnyVariable(it, resolvers));
 }
 
-// Collections are memoized to preserve referential equality
-const toCollection = memoize(_toCollection, collection => collection.id);
-function _toCollection(figmaCollection: FigmaCollection): Collection {
+function toCollection(figmaCollection: FigmaCollection): Collection {
   const { name } = figmaCollection;
   const modes = figmaCollection.modes.map(toMode);
   const defaultMode = toMode(getDefaultMode(figmaCollection));
@@ -110,33 +111,27 @@ function toMode({ name }: FigmaMode) {
 function toAnyVariable(
   variable: FigmaVariable,
   resolvers: Resolvers,
-  // Used to detect cycles
-  aliasDeps: string[] = [],
 ): AnyVariable {
   const { resolvedType } = variable;
 
   if (resolvedType === "COLOR") {
-    return toVariable(variable, resolvers, aliasDeps, toColorValue, it =>
-      toScopes(COLOR_SCOPE_MAPPING, it),
-    );
+    return toVariable(variable, resolvers, toColorValue, toColorScopes);
   }
 
   if (resolvedType === "FLOAT") {
-    return toVariable(variable, resolvers, aliasDeps, toNumberValue, it =>
-      toScopes(NUMBER_SCOPE_MAPPING, it),
-    );
+    return toVariable(variable, resolvers, toNumberValue, toNumberScopes);
   }
 
   if (resolvedType === "BOOLEAN") {
-    return toVariable(variable, resolvers, aliasDeps, toBooleanValue, it =>
-      toScopes(BOOLEAN_SCOPE_MAPPING, it),
-    );
+    return toVariable(variable, resolvers, toBooleanValue, toBooleanScopes);
   }
 
   if (resolvedType === "STRING") {
-    return toVariable(variable, resolvers, aliasDeps, toStringValue, it =>
-      toScopes(STRING_SCOPE_MAPPING, it),
-    );
+    return toVariable(variable, resolvers, toStringValue, toStringScopes);
+
+    // This is unreachable because of the `isSupportedByJson` check. It is kept
+    // here in case the supported types change.
+    /* v8 ignore next 4 */
   }
 
   fail(`Unsupported variable type: ${resolvedType}`);
@@ -145,26 +140,18 @@ function toAnyVariable(
 function toVariable<V extends AnyValue, S extends string>(
   figmaVariable: FigmaVariable,
   resolvers: Resolvers,
-  aliasDeps: string[],
   toValue: (figmaValue: VariableValue) => V,
   toScopes: (scopes: VariableScope[]) => S[],
 ): Variable<V, S> {
   const { name, variableCollectionId } = figmaVariable;
   const { resolveCollection, resolveDefaultValue } = resolvers;
 
-  const figmaCollection = resolveCollection(variableCollectionId);
-
-  const key = toVariableKey(figmaCollection, figmaVariable);
-  const collection = toCollection(figmaCollection);
+  const collection = resolveCollection(variableCollectionId);
+  const key = toVariableKey(collection, figmaVariable);
   const scopes = toScopes(figmaVariable.scopes);
+  const valuesByMode = getValuesByMode(figmaVariable, resolvers, toValue);
   const defaultValue = toValue(resolveDefaultValue(figmaVariable));
-  const type = defaultValue.type;
-  const valuesByMode = getValuesByMode(
-    figmaVariable,
-    resolvers,
-    aliasDeps,
-    toValue,
-  );
+  const { type } = defaultValue;
 
   return {
     key,
@@ -180,16 +167,13 @@ function toVariable<V extends AnyValue, S extends string>(
 function getValuesByMode<T>(
   variable: FigmaVariable,
   resolvers: Resolvers,
-  aliasDeps: string[],
   toValue: (figmaValue: VariableValue) => T,
 ): Record<string, T | AliasValue> {
   const collectionId = variable.variableCollectionId;
   return chain(variable.valuesByMode)
     .mapKeys((_, key) => toMode(resolvers.resolveMode(collectionId, key)))
     .mapValues(it =>
-      isFigmaVariableAlias(it)
-        ? toAliasValue(it, resolvers, aliasDeps)
-        : toValue(it),
+      isFigmaVariableAlias(it) ? toAliasValue(it, resolvers) : toValue(it),
     )
     .value();
 }
@@ -197,27 +181,16 @@ function getValuesByMode<T>(
 function toAliasValue(
   figmaValue: VariableAlias,
   resolvers: Resolvers,
-  aliasDeps: string[],
 ): AliasValue {
   const variableId = figmaValue.id;
-  assert(
-    !aliasDeps.includes(variableId),
-    `Cycle detected: ${aliasDeps.join(" -> ")} -> ${variableId}`,
-  );
-
   const variable = resolvers.resolveVariable(variableId);
-  const { key } = toAnyVariable(variable, resolvers, [
-    ...aliasDeps,
-    variableId,
-  ]);
+  const collection = resolvers.resolveCollection(variable.variableCollectionId);
+  const key = toVariableKey(collection, variable);
   return { type: "alias", value: { key } };
 }
 
-function toVariableKey(
-  figmaCollection: FigmaCollection,
-  figmaVariable: FigmaVariable,
-) {
-  return `${figmaCollection.name}/${figmaVariable.name}`;
+function toVariableKey(collection: Collection, figmaVariable: FigmaVariable) {
+  return `${collection.name}/${figmaVariable.name}`;
 }
 
 function toColorValue(figmaValue: VariableValue): ColorValue {
@@ -228,16 +201,6 @@ function toColorValue(figmaValue: VariableValue): ColorValue {
   const hex = toHex(figmaValue);
   const rgba = toRgba(figmaValue);
   return { type: "color", value: { hex, rgba } };
-}
-
-function toScopes<T extends string>(
-  mapping: Partial<Record<VariableScope, T[]>>,
-  scopes: VariableScope[],
-): T[] {
-  return chain(scopes)
-    .flatMap(it => mapping[it] || [])
-    .uniq()
-    .value();
 }
 
 function toHex(value: RGB | RGBA): string {
@@ -281,6 +244,32 @@ function toBooleanValue(figmaValue: VariableValue): BooleanValue {
   return { type: "boolean", value: figmaValue };
 }
 
+function toColorScopes(scopes: VariableScope[]): ColorScope[] {
+  return toScopes(COLOR_SCOPE_MAPPING, scopes);
+}
+
+function toNumberScopes(scopes: VariableScope[]): NumberScope[] {
+  return toScopes(NUMBER_SCOPE_MAPPING, scopes);
+}
+
+function toStringScopes(scopes: VariableScope[]): StringScope[] {
+  return toScopes(STRING_SCOPE_MAPPING, scopes);
+}
+
+function toBooleanScopes(scopes: VariableScope[]): BooleanScope[] {
+  return toScopes(BOOLEAN_SCOPE_MAPPING, scopes);
+}
+
+function toScopes<T extends string>(
+  mapping: Partial<Record<VariableScope, T[]>>,
+  scopes: VariableScope[],
+): T[] {
+  return chain(scopes)
+    .flatMap(it => mapping[it] || [])
+    .uniq()
+    .value();
+}
+
 export function isSupportedByCss(value: AnyVariable) {
   return CSS_SUPPORTED_TYPES.includes(value.type);
 }
@@ -290,7 +279,7 @@ export function isSupportedByJson(value: FigmaVariable) {
 }
 
 interface Resolvers {
-  resolveCollection: (collectionId: string) => FigmaCollection;
+  resolveCollection: (collectionId: string) => Collection;
   resolveMode: (collectionId: string, modeId: string) => FigmaMode;
   resolveVariable: (variableId: string) => FigmaVariable;
   resolveDefaultValue: (value: FigmaVariable) => VariableValue;

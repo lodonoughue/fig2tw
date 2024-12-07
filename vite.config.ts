@@ -13,9 +13,12 @@ export default defineConfig({
     },
   },
   test: {
+    globals: true,
+    environment: "jsdom",
     include: ["src/**/*.spec.{ts,tsx}"],
     coverage: {
       include: ["src/**/*.{ts,tsx}"],
+      thresholds: { "100": true },
     },
   },
 });

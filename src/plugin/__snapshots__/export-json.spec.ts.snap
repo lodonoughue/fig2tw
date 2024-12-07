@@ -1,0 +1,953 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`exportJson (tabWidth=2) > should export boolean variables 1`] = `
+"{
+  "Boolean/Falsy": {
+    "type": "boolean",
+    "key": "Boolean/Falsy",
+    "name": "Falsy",
+    "valuesByMode": {
+      "true": {
+        "type": "boolean",
+        "value": false
+      },
+      "false": {
+        "type": "boolean",
+        "value": true
+      }
+    },
+    "defaultValue": {
+      "type": "boolean",
+      "value": false
+    },
+    "collection": {
+      "name": "Boolean",
+      "modes": [
+        "true",
+        "false"
+      ],
+      "defaultMode": "true"
+    },
+    "scopes": [
+      "all-booleans"
+    ]
+  },
+  "Boolean/Alias": {
+    "type": "boolean",
+    "key": "Boolean/Alias",
+    "name": "Alias",
+    "valuesByMode": {
+      "regular": {
+        "type": "alias",
+        "value": {
+          "key": "Boolean/Target"
+        }
+      },
+      "comic": {
+        "type": "alias",
+        "value": {
+          "key": "Boolean/Target"
+        }
+      }
+    },
+    "defaultValue": {
+      "type": "boolean",
+      "value": true
+    },
+    "collection": {
+      "name": "Boolean",
+      "modes": [
+        "regular",
+        "comic"
+      ],
+      "defaultMode": "regular"
+    },
+    "scopes": [
+      "all-booleans"
+    ]
+  }
+}"
+`;
+
+exports[`exportJson (tabWidth=2) > should export color variables 1`] = `
+"{
+  "Color/Primary": {
+    "type": "color",
+    "key": "Color/Primary",
+    "name": "Primary",
+    "valuesByMode": {
+      "light": {
+        "type": "color",
+        "value": {
+          "hex": "#800000",
+          "rgba": [
+            128,
+            0,
+            0,
+            1
+          ]
+        }
+      },
+      "dark": {
+        "type": "color",
+        "value": {
+          "hex": "#c00000",
+          "rgba": [
+            192,
+            0,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    "defaultValue": {
+      "type": "color",
+      "value": {
+        "hex": "#800000",
+        "rgba": [
+          128,
+          0,
+          0,
+          1
+        ]
+      }
+    },
+    "collection": {
+      "name": "Color",
+      "modes": [
+        "light",
+        "dark"
+      ],
+      "defaultMode": "light"
+    },
+    "scopes": [
+      "all-colors"
+    ]
+  },
+  "Color/Secondary": {
+    "type": "color",
+    "key": "Color/Secondary",
+    "name": "Secondary",
+    "valuesByMode": {
+      "light": {
+        "type": "color",
+        "value": {
+          "hex": "#008000",
+          "rgba": [
+            0,
+            128,
+            0,
+            1
+          ]
+        }
+      },
+      "dark": {
+        "type": "color",
+        "value": {
+          "hex": "#00c000",
+          "rgba": [
+            0,
+            192,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    "defaultValue": {
+      "type": "color",
+      "value": {
+        "hex": "#008000",
+        "rgba": [
+          0,
+          128,
+          0,
+          1
+        ]
+      }
+    },
+    "collection": {
+      "name": "Color",
+      "modes": [
+        "light",
+        "dark"
+      ],
+      "defaultMode": "light"
+    },
+    "scopes": [
+      "all-colors"
+    ]
+  },
+  "Color/Tertiary": {
+    "type": "color",
+    "key": "Color/Tertiary",
+    "name": "Tertiary",
+    "valuesByMode": {
+      "light": {
+        "type": "color",
+        "value": {
+          "hex": "#000080",
+          "rgba": [
+            0,
+            0,
+            128,
+            1
+          ]
+        }
+      },
+      "dark": {
+        "type": "color",
+        "value": {
+          "hex": "#0000c0",
+          "rgba": [
+            0,
+            0,
+            192,
+            1
+          ]
+        }
+      }
+    },
+    "defaultValue": {
+      "type": "color",
+      "value": {
+        "hex": "#000080",
+        "rgba": [
+          0,
+          0,
+          128,
+          1
+        ]
+      }
+    },
+    "collection": {
+      "name": "Color",
+      "modes": [
+        "light",
+        "dark"
+      ],
+      "defaultMode": "light"
+    },
+    "scopes": [
+      "all-colors"
+    ]
+  },
+  "Color/Alias": {
+    "type": "color",
+    "key": "Color/Alias",
+    "name": "Alias",
+    "valuesByMode": {
+      "light": {
+        "type": "alias",
+        "value": {
+          "key": "Color/Primary"
+        }
+      },
+      "dark": {
+        "type": "alias",
+        "value": {
+          "key": "Color/Secondary"
+        }
+      }
+    },
+    "defaultValue": {
+      "type": "color",
+      "value": {
+        "hex": "#ff000000",
+        "rgba": [
+          255,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "collection": {
+      "name": "Color",
+      "modes": [
+        "light",
+        "dark"
+      ],
+      "defaultMode": "light"
+    },
+    "scopes": [
+      "all-colors"
+    ]
+  }
+}"
+`;
+
+exports[`exportJson (tabWidth=2) > should export number variables 1`] = `
+"{
+  "Number/Gap": {
+    "type": "number",
+    "key": "Number/Gap",
+    "name": "Gap",
+    "valuesByMode": {
+      "regular": {
+        "type": "number",
+        "value": 8
+      },
+      "condensed": {
+        "type": "number",
+        "value": 4
+      }
+    },
+    "defaultValue": {
+      "type": "number",
+      "value": 8
+    },
+    "collection": {
+      "name": "Number",
+      "modes": [
+        "regular",
+        "condensed"
+      ],
+      "defaultMode": "regular"
+    },
+    "scopes": [
+      "gap"
+    ]
+  },
+  "Number/Radius": {
+    "type": "number",
+    "key": "Number/Radius",
+    "name": "Radius",
+    "valuesByMode": {
+      "regular": {
+        "type": "number",
+        "value": 16
+      },
+      "condensed": {
+        "type": "number",
+        "value": 12
+      }
+    },
+    "defaultValue": {
+      "type": "number",
+      "value": 16
+    },
+    "collection": {
+      "name": "Number",
+      "modes": [
+        "regular",
+        "condensed"
+      ],
+      "defaultMode": "regular"
+    },
+    "scopes": [
+      "radius"
+    ]
+  },
+  "Number/Size": {
+    "type": "number",
+    "key": "Number/Size",
+    "name": "Size",
+    "valuesByMode": {
+      "regular": {
+        "type": "number",
+        "value": 20
+      },
+      "condensed": {
+        "type": "number",
+        "value": 24
+      }
+    },
+    "defaultValue": {
+      "type": "number",
+      "value": 20
+    },
+    "collection": {
+      "name": "Number",
+      "modes": [
+        "regular",
+        "condensed"
+      ],
+      "defaultMode": "regular"
+    },
+    "scopes": [
+      "size"
+    ]
+  },
+  "Number/Alias": {
+    "type": "number",
+    "key": "Number/Alias",
+    "name": "Alias",
+    "valuesByMode": {
+      "regular": {
+        "type": "alias",
+        "value": {
+          "key": "Number/Radius"
+        }
+      },
+      "condensed": {
+        "type": "alias",
+        "value": {
+          "key": "Number/Size"
+        }
+      }
+    },
+    "defaultValue": {
+      "type": "number",
+      "value": 42
+    },
+    "collection": {
+      "name": "Number",
+      "modes": [
+        "regular",
+        "condensed"
+      ],
+      "defaultMode": "regular"
+    },
+    "scopes": [
+      "all-numbers"
+    ]
+  }
+}"
+`;
+
+exports[`exportJson (tabWidth=2) > should export string variables 1`] = `
+"{
+  "String/Font Family": {
+    "type": "string",
+    "key": "String/Font Family",
+    "name": "Font Family",
+    "valuesByMode": {
+      "regular": {
+        "type": "string",
+        "value": "Arial"
+      },
+      "comic": {
+        "type": "string",
+        "value": "Comic Sans"
+      }
+    },
+    "defaultValue": {
+      "type": "string",
+      "value": "Arial"
+    },
+    "collection": {
+      "name": "String",
+      "modes": [
+        "regular",
+        "comic"
+      ],
+      "defaultMode": "regular"
+    },
+    "scopes": [
+      "font-family"
+    ]
+  },
+  "String/Alias": {
+    "type": "string",
+    "key": "String/Alias",
+    "name": "Alias",
+    "valuesByMode": {
+      "regular": {
+        "type": "alias",
+        "value": {
+          "key": "String/Target"
+        }
+      },
+      "comic": {
+        "type": "alias",
+        "value": {
+          "key": "String/Target"
+        }
+      }
+    },
+    "defaultValue": {
+      "type": "string",
+      "value": "foo"
+    },
+    "collection": {
+      "name": "String",
+      "modes": [
+        "regular",
+        "comic"
+      ],
+      "defaultMode": "regular"
+    },
+    "scopes": [
+      "all-strings"
+    ]
+  }
+}"
+`;
+
+exports[`exportJson (tabWidth=4) > should export boolean variables 1`] = `
+"{
+    "Boolean/Falsy": {
+        "type": "boolean",
+        "key": "Boolean/Falsy",
+        "name": "Falsy",
+        "valuesByMode": {
+            "true": {
+                "type": "boolean",
+                "value": false
+            },
+            "false": {
+                "type": "boolean",
+                "value": true
+            }
+        },
+        "defaultValue": {
+            "type": "boolean",
+            "value": false
+        },
+        "collection": {
+            "name": "Boolean",
+            "modes": [
+                "true",
+                "false"
+            ],
+            "defaultMode": "true"
+        },
+        "scopes": [
+            "all-booleans"
+        ]
+    },
+    "Boolean/Alias": {
+        "type": "boolean",
+        "key": "Boolean/Alias",
+        "name": "Alias",
+        "valuesByMode": {
+            "regular": {
+                "type": "alias",
+                "value": {
+                    "key": "Boolean/Target"
+                }
+            },
+            "comic": {
+                "type": "alias",
+                "value": {
+                    "key": "Boolean/Target"
+                }
+            }
+        },
+        "defaultValue": {
+            "type": "boolean",
+            "value": true
+        },
+        "collection": {
+            "name": "Boolean",
+            "modes": [
+                "regular",
+                "comic"
+            ],
+            "defaultMode": "regular"
+        },
+        "scopes": [
+            "all-booleans"
+        ]
+    }
+}"
+`;
+
+exports[`exportJson (tabWidth=4) > should export color variables 1`] = `
+"{
+    "Color/Primary": {
+        "type": "color",
+        "key": "Color/Primary",
+        "name": "Primary",
+        "valuesByMode": {
+            "light": {
+                "type": "color",
+                "value": {
+                    "hex": "#800000",
+                    "rgba": [
+                        128,
+                        0,
+                        0,
+                        1
+                    ]
+                }
+            },
+            "dark": {
+                "type": "color",
+                "value": {
+                    "hex": "#c00000",
+                    "rgba": [
+                        192,
+                        0,
+                        0,
+                        1
+                    ]
+                }
+            }
+        },
+        "defaultValue": {
+            "type": "color",
+            "value": {
+                "hex": "#800000",
+                "rgba": [
+                    128,
+                    0,
+                    0,
+                    1
+                ]
+            }
+        },
+        "collection": {
+            "name": "Color",
+            "modes": [
+                "light",
+                "dark"
+            ],
+            "defaultMode": "light"
+        },
+        "scopes": [
+            "all-colors"
+        ]
+    },
+    "Color/Secondary": {
+        "type": "color",
+        "key": "Color/Secondary",
+        "name": "Secondary",
+        "valuesByMode": {
+            "light": {
+                "type": "color",
+                "value": {
+                    "hex": "#008000",
+                    "rgba": [
+                        0,
+                        128,
+                        0,
+                        1
+                    ]
+                }
+            },
+            "dark": {
+                "type": "color",
+                "value": {
+                    "hex": "#00c000",
+                    "rgba": [
+                        0,
+                        192,
+                        0,
+                        1
+                    ]
+                }
+            }
+        },
+        "defaultValue": {
+            "type": "color",
+            "value": {
+                "hex": "#008000",
+                "rgba": [
+                    0,
+                    128,
+                    0,
+                    1
+                ]
+            }
+        },
+        "collection": {
+            "name": "Color",
+            "modes": [
+                "light",
+                "dark"
+            ],
+            "defaultMode": "light"
+        },
+        "scopes": [
+            "all-colors"
+        ]
+    },
+    "Color/Tertiary": {
+        "type": "color",
+        "key": "Color/Tertiary",
+        "name": "Tertiary",
+        "valuesByMode": {
+            "light": {
+                "type": "color",
+                "value": {
+                    "hex": "#000080",
+                    "rgba": [
+                        0,
+                        0,
+                        128,
+                        1
+                    ]
+                }
+            },
+            "dark": {
+                "type": "color",
+                "value": {
+                    "hex": "#0000c0",
+                    "rgba": [
+                        0,
+                        0,
+                        192,
+                        1
+                    ]
+                }
+            }
+        },
+        "defaultValue": {
+            "type": "color",
+            "value": {
+                "hex": "#000080",
+                "rgba": [
+                    0,
+                    0,
+                    128,
+                    1
+                ]
+            }
+        },
+        "collection": {
+            "name": "Color",
+            "modes": [
+                "light",
+                "dark"
+            ],
+            "defaultMode": "light"
+        },
+        "scopes": [
+            "all-colors"
+        ]
+    },
+    "Color/Alias": {
+        "type": "color",
+        "key": "Color/Alias",
+        "name": "Alias",
+        "valuesByMode": {
+            "light": {
+                "type": "alias",
+                "value": {
+                    "key": "Color/Primary"
+                }
+            },
+            "dark": {
+                "type": "alias",
+                "value": {
+                    "key": "Color/Secondary"
+                }
+            }
+        },
+        "defaultValue": {
+            "type": "color",
+            "value": {
+                "hex": "#ff000000",
+                "rgba": [
+                    255,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        },
+        "collection": {
+            "name": "Color",
+            "modes": [
+                "light",
+                "dark"
+            ],
+            "defaultMode": "light"
+        },
+        "scopes": [
+            "all-colors"
+        ]
+    }
+}"
+`;
+
+exports[`exportJson (tabWidth=4) > should export number variables 1`] = `
+"{
+    "Number/Gap": {
+        "type": "number",
+        "key": "Number/Gap",
+        "name": "Gap",
+        "valuesByMode": {
+            "regular": {
+                "type": "number",
+                "value": 8
+            },
+            "condensed": {
+                "type": "number",
+                "value": 4
+            }
+        },
+        "defaultValue": {
+            "type": "number",
+            "value": 8
+        },
+        "collection": {
+            "name": "Number",
+            "modes": [
+                "regular",
+                "condensed"
+            ],
+            "defaultMode": "regular"
+        },
+        "scopes": [
+            "gap"
+        ]
+    },
+    "Number/Radius": {
+        "type": "number",
+        "key": "Number/Radius",
+        "name": "Radius",
+        "valuesByMode": {
+            "regular": {
+                "type": "number",
+                "value": 16
+            },
+            "condensed": {
+                "type": "number",
+                "value": 12
+            }
+        },
+        "defaultValue": {
+            "type": "number",
+            "value": 16
+        },
+        "collection": {
+            "name": "Number",
+            "modes": [
+                "regular",
+                "condensed"
+            ],
+            "defaultMode": "regular"
+        },
+        "scopes": [
+            "radius"
+        ]
+    },
+    "Number/Size": {
+        "type": "number",
+        "key": "Number/Size",
+        "name": "Size",
+        "valuesByMode": {
+            "regular": {
+                "type": "number",
+                "value": 20
+            },
+            "condensed": {
+                "type": "number",
+                "value": 24
+            }
+        },
+        "defaultValue": {
+            "type": "number",
+            "value": 20
+        },
+        "collection": {
+            "name": "Number",
+            "modes": [
+                "regular",
+                "condensed"
+            ],
+            "defaultMode": "regular"
+        },
+        "scopes": [
+            "size"
+        ]
+    },
+    "Number/Alias": {
+        "type": "number",
+        "key": "Number/Alias",
+        "name": "Alias",
+        "valuesByMode": {
+            "regular": {
+                "type": "alias",
+                "value": {
+                    "key": "Number/Radius"
+                }
+            },
+            "condensed": {
+                "type": "alias",
+                "value": {
+                    "key": "Number/Size"
+                }
+            }
+        },
+        "defaultValue": {
+            "type": "number",
+            "value": 42
+        },
+        "collection": {
+            "name": "Number",
+            "modes": [
+                "regular",
+                "condensed"
+            ],
+            "defaultMode": "regular"
+        },
+        "scopes": [
+            "all-numbers"
+        ]
+    }
+}"
+`;
+
+exports[`exportJson (tabWidth=4) > should export string variables 1`] = `
+"{
+    "String/Font Family": {
+        "type": "string",
+        "key": "String/Font Family",
+        "name": "Font Family",
+        "valuesByMode": {
+            "regular": {
+                "type": "string",
+                "value": "Arial"
+            },
+            "comic": {
+                "type": "string",
+                "value": "Comic Sans"
+            }
+        },
+        "defaultValue": {
+            "type": "string",
+            "value": "Arial"
+        },
+        "collection": {
+            "name": "String",
+            "modes": [
+                "regular",
+                "comic"
+            ],
+            "defaultMode": "regular"
+        },
+        "scopes": [
+            "font-family"
+        ]
+    },
+    "String/Alias": {
+        "type": "string",
+        "key": "String/Alias",
+        "name": "Alias",
+        "valuesByMode": {
+            "regular": {
+                "type": "alias",
+                "value": {
+                    "key": "String/Target"
+                }
+            },
+            "comic": {
+                "type": "alias",
+                "value": {
+                    "key": "String/Target"
+                }
+            }
+        },
+        "defaultValue": {
+            "type": "string",
+            "value": "foo"
+        },
+        "collection": {
+            "name": "String",
+            "modes": [
+                "regular",
+                "comic"
+            ],
+            "defaultMode": "regular"
+        },
+        "scopes": [
+            "all-strings"
+        ]
+    }
+}"
+`;

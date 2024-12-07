@@ -5,6 +5,7 @@ export default function RadioGroup<T extends string>({
   ref,
   id,
   name,
+  className,
   value,
   choices,
   onChange,
@@ -15,7 +16,7 @@ export default function RadioGroup<T extends string>({
   name = name || id || defaultId;
 
   return (
-    <div role="radiogroup" className="flex flex-row gap-sm">
+    <div role="radiogroup" className={clsx(className, "flex flex-row gap-sm")}>
       {choices.map((it, index) => (
         <Radio
           key={it}
@@ -26,6 +27,7 @@ export default function RadioGroup<T extends string>({
           checked={value === it}
           onChange={onChange}
           onBlur={onBlur}
+          readOnly={onChange == null}
         />
       ))}
     </div>
@@ -78,7 +80,7 @@ function Radio({
 interface Props<T extends string>
   extends Pick<
     ComponentProps<"input">,
-    "ref" | "id" | "name" | "onChange" | "onBlur"
+    "ref" | "id" | "name" | "onChange" | "onBlur" | "className"
   > {
   choices: T[];
   value?: T;

@@ -1,13 +1,14 @@
-import { PropsWithClassName } from "@ui/types";
+import React, { ComponentProps } from "react";
 import clsx from "clsx";
-import React, { PropsWithChildren } from "react";
 
-export default function Description({ className, children }: Props) {
+export default function Description({
+  className,
+  ...rest
+}: ComponentProps<"p">) {
   return (
-    <p className={clsx(className, "font-body-small text-body-small")}>
-      {children}
-    </p>
+    <p
+      {...rest}
+      className={clsx(className, "font-body-small text-body-small")}
+    />
   );
 }
-
-interface Props extends PropsWithChildren, PropsWithClassName {}

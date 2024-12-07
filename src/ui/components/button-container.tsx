@@ -1,13 +1,11 @@
-import React, { PropsWithChildren } from "react";
+import React, { ComponentProps } from "react";
 import clsx from "clsx";
-import { PropsWithClassName } from "@ui/types";
 
-export default function ButtonContainer({ className, children }: Props) {
+export default function ButtonContainer({
+  className,
+  ...rest
+}: ComponentProps<"div">) {
   return (
-    <div className={clsx(className, "flex flex-row items-center")}>
-      {children}
-    </div>
+    <div {...rest} className={clsx(className, "flex flex-row items-center")} />
   );
 }
-
-interface Props extends PropsWithClassName, PropsWithChildren {}

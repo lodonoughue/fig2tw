@@ -1,14 +1,11 @@
-import React from "react";
-import { PropsWithClassName } from "@ui/types";
+import React, { ComponentProps } from "react";
 import clsx from "clsx";
-import { PropsWithChildren } from "react";
 
-export default function Navigation({ children, className }: Props) {
+export default function Navigation({
+  className,
+  ...rest
+}: ComponentProps<"nav">) {
   return (
-    <nav className={clsx(className, "flex flex-row px-md gap-md")}>
-      {children}
-    </nav>
+    <nav {...rest} className={clsx(className, "flex flex-row px-md gap-md")} />
   );
 }
-
-interface Props extends PropsWithClassName, PropsWithChildren {}

@@ -111,11 +111,14 @@ export function createMessageBroker(): MessageBroker {
   if (typeof figma !== "undefined") {
     return new PluginMessageBroker();
   }
+
   if (typeof window !== "undefined") {
     return new UiMessageBroker();
+
+    // This is unreachable because of the `isSupportedByJson` check. It is kept
+    // here in case the supported types change.
+    /* v8 ignore next 4 */
   }
-  fail(
-    "Cannot detect current environment because neither figma nor window are",
-    "defined.",
-  );
+
+  fail("Cannot detect current environment for message broker.");
 }

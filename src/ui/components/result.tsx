@@ -1,7 +1,5 @@
-import React from "react";
-import { PropsWithClassName } from "@ui/types";
+import React, { ComponentProps } from "react";
 import clsx from "clsx";
-import { PropsWithChildren } from "react";
 import { copyToClipboard } from "@ui/utils/clipboard";
 import Button from "./button";
 
@@ -11,9 +9,10 @@ export default function Result({
   onReload,
   onDownload = () => {},
   onCopy = copyToClipboard,
+  ...rest
 }: Props) {
   return (
-    <div className={clsx(className, "flex flex-col gap-sm")}>
+    <div {...rest} className={clsx(className, "flex flex-col gap-sm")}>
       <div
         className={clsx(
           "p-sm rounded-sm overflow-auto basis-0 grow",
@@ -40,7 +39,7 @@ function sanitize(result: Props["children"]) {
   return Array.isArray(result) ? result.join("\n") : result || "";
 }
 
-interface Props extends PropsWithClassName, PropsWithChildren {
+interface Props extends Omit<ComponentProps<"div">, "children" | "onCopy"> {
   children?: string | string[] | null;
   onReload?: () => void;
   onCopy?: (result: string) => void;

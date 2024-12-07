@@ -6,14 +6,13 @@ export default function TextArea({ className, ...rest }: Props) {
   return (
     <div className={clsx(className, "bg-container rounded-sm p-xs flex ")}>
       <textarea
+        {...rest}
         className={clsx(
-          className,
           "min-h-32 grow p-sm rounded-xs text-code font-code outline outline-2",
           "bg-container text-on-container resize-none outline-offset-2",
           "outline-primary/0 transition",
           "focus-visible:outline-primary hover:bg-primary-container",
         )}
-        {...rest}
       />
     </div>
   );
