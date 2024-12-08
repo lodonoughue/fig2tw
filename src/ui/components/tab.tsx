@@ -1,11 +1,19 @@
-import React, { ComponentProps } from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+} from "react";
 import clsx from "clsx";
 
-export default function Tab({ className, isSelected = false, ...rest }: Props) {
+function TabWithRef(
+  { className, isSelected = false, ...rest }: Props,
+  ref: ForwardedRef<HTMLButtonElement>,
+) {
   return (
     <button
       role="tab"
       {...rest}
+      ref={ref}
       aria-selected={isSelected}
       className={clsx(
         className,
@@ -24,6 +32,9 @@ export default function Tab({ className, isSelected = false, ...rest }: Props) {
   );
 }
 
-interface Props extends ComponentProps<"button"> {
+interface Props extends ComponentPropsWithoutRef<"button"> {
   isSelected?: boolean;
 }
+
+const Tab = forwardRef(TabWithRef);
+export default Tab;

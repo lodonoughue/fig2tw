@@ -1,11 +1,22 @@
-import React, { ComponentProps } from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+} from "react";
 import clsx from "clsx";
 
-export default function ButtonContainer({
-  className,
-  ...rest
-}: ComponentProps<"div">) {
+function ButtonContainerWithRef(
+  { className, ...rest }: ComponentPropsWithoutRef<"div">,
+  ref: ForwardedRef<HTMLDivElement>,
+) {
   return (
-    <div {...rest} className={clsx(className, "flex flex-row items-center")} />
+    <div
+      {...rest}
+      ref={ref}
+      className={clsx(className, "flex flex-row items-center")}
+    />
   );
 }
+
+const ButtonContainer = forwardRef(ButtonContainerWithRef);
+export default ButtonContainer;

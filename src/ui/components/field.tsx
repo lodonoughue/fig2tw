@@ -1,7 +1,10 @@
 import React, {
   ComponentProps,
+  ComponentPropsWithoutRef,
   ComponentType,
   createContext,
+  ForwardedRef,
+  forwardRef,
   useContext,
 } from "react";
 import { useId } from "react";
@@ -9,18 +12,15 @@ import clsx from "clsx";
 import Label from "./label";
 import { assert } from "@common/assert";
 
-export default function Field({
-  className,
-  children,
-  label,
-  labelSize,
-  description,
-  ...rest
-}: Props) {
+function FieldWithRef(
+  { className, children, label, labelSize, description, ...rest }: Props,
+  ref: ForwardedRef<HTMLLabelElement>,
+) {
   const id = useId();
   return (
     <label
       {...rest}
+      ref={ref}
       htmlFor={id}
       className={clsx(className, "flex flex-col gap-xs")}>
       <Label size={labelSize}>{label}</Label>
@@ -49,12 +49,15 @@ export function withFieldContext<P extends object>(
   };
 }
 
-interface Props extends Omit<ComponentProps<"label">, "htmlFor"> {
+interface Props extends Omit<ComponentPropsWithoutRef<"label">, "htmlFor"> {
   label: string;
   labelSize?: ComponentProps<typeof Label>["size"];
   description?: string;
 }
 
 interface FieldContext {
-  id: string;
+  id: string | null | undefined;
 }
+
+const Field = forwardRef(FieldWithRef);
+export default Field;

@@ -1,9 +1,22 @@
-import React, { ComponentProps } from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+} from "react";
 import { clsx } from "clsx";
 
-export default function Header({
-  className,
-  ...rest
-}: ComponentProps<"header">) {
-  return <header {...rest} className={clsx(className, "px-md flex gap-sm")} />;
+function HeaderWithRef(
+  { className, ...rest }: ComponentPropsWithoutRef<"header">,
+  ref: ForwardedRef<HTMLElement>,
+) {
+  return (
+    <header
+      {...rest}
+      ref={ref}
+      className={clsx(className, "px-md flex gap-sm")}
+    />
+  );
 }
+
+const Header = forwardRef(HeaderWithRef);
+export default Header;

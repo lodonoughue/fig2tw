@@ -1,15 +1,19 @@
-import React, { ComponentProps } from "react";
+import React, {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+} from "react";
 import clsx from "clsx";
 
-export default function Button({
-  className,
-  variant = "accent",
-  children,
-  ...rest
-}: Props) {
+function ButtonWithRef(
+  { className, variant = "accent", children, ...rest }: Props,
+  ref: ForwardedRef<HTMLButtonElement>,
+) {
   return (
     <button
       {...rest}
+      ref={ref}
       className={clsx(
         className,
         BUTTON_CLASS_MAPPING[variant],
@@ -51,6 +55,9 @@ const PANEL_CLASS_MAPPING = {
   regular: "bg-container text-on-container",
 } satisfies Record<NonNullable<Props["variant"]>, string>;
 
-interface Props extends ComponentProps<"button"> {
+interface Props extends ComponentPropsWithoutRef<"button"> {
   variant?: "accent" | "regular";
 }
+
+const Button = forwardRef(ButtonWithRef);
+export default Button;

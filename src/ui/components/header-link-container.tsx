@@ -1,9 +1,18 @@
-import React, { ComponentProps } from "react";
+import React, { ComponentPropsWithRef, ForwardedRef, forwardRef } from "react";
 import { clsx } from "clsx";
 
-export default function HeaderLinkContainer({
-  className,
-  ...rest
-}: ComponentProps<"div">) {
-  return <div {...rest} className={clsx(className, "flex flex-col gap-sm")} />;
+function HeaderLinkContainerWithRef(
+  { className, ...rest }: ComponentPropsWithRef<"div">,
+  ref: ForwardedRef<HTMLDivElement>,
+) {
+  return (
+    <div
+      {...rest}
+      ref={ref}
+      className={clsx(className, "flex flex-col gap-sm")}
+    />
+  );
 }
+
+const HeaderLinkContainer = forwardRef(HeaderLinkContainerWithRef);
+export default HeaderLinkContainer;

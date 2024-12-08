@@ -1,16 +1,15 @@
 import clsx from "clsx";
-import React, { ComponentProps, useId } from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+  useId,
+} from "react";
 
-export default function RadioGroup<T extends string>({
-  ref,
-  id,
-  name,
-  className,
-  value,
-  choices,
-  onChange,
-  onBlur,
-}: Props<T>) {
+function RadioGroupWithRef<T extends string>(
+  { id, name, className, value, choices, onChange, onBlur }: Props<T>,
+  ref: ForwardedRef<HTMLInputElement>,
+) {
   const refIndex = value != null ? choices.indexOf(value) : 0;
   const defaultId = useId();
   name = name || id || defaultId;
@@ -34,14 +33,17 @@ export default function RadioGroup<T extends string>({
   );
 }
 
-function Radio({
-  id,
-  name,
-  className,
-  value,
-  checked,
-  ...rest
-}: ComponentProps<"input">) {
+function RadioWithRef(
+  {
+    id,
+    name,
+    className,
+    value,
+    checked,
+    ...rest
+  }: ComponentPropsWithoutRef<"input">,
+  ref: ForwardedRef<HTMLInputElement>,
+) {
   const defaultId = useId();
   id = id || defaultId;
 
@@ -53,6 +55,7 @@ function Radio({
         "bg-container",
       )}>
       <input
+        ref={ref}
         id={id}
         name={name}
         type="radio"
@@ -79,9 +82,13 @@ function Radio({
 
 interface Props<T extends string>
   extends Pick<
-    ComponentProps<"input">,
-    "ref" | "id" | "name" | "onChange" | "onBlur" | "className"
+    ComponentPropsWithoutRef<"input">,
+    "id" | "name" | "onChange" | "onBlur" | "className"
   > {
   choices: T[];
   value?: T;
 }
+
+const Radio = forwardRef(RadioWithRef);
+const RadioGroup = forwardRef(RadioGroupWithRef);
+export default RadioGroup;

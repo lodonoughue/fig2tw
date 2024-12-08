@@ -1,19 +1,23 @@
-import React, { ComponentProps, ReactNode } from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+} from "react";
 import clsx from "clsx";
 import Label from "./label";
 import WarningBox from "./warning-box";
 import { isBlank } from "@common/formatters";
 
-export default function FieldGroup({
-  className,
-  children,
-  label,
-  description,
-  emptyWarning,
-  ...rest
-}: Props) {
+function FieldGroupWithRef(
+  { className, children, label, description, emptyWarning, ...rest }: Props,
+  ref: ForwardedRef<HTMLDivElement>,
+) {
   return (
-    <div {...rest} className={clsx(className, "flex flex-col gap-sm")}>
+    <div
+      {...rest}
+      ref={ref}
+      className={clsx(className, "flex flex-col gap-sm")}>
       <div className="flex flex-col gap-xs">
         <Label>{label}</Label>
         {description != null ? (
@@ -48,8 +52,11 @@ function hasChildren(children: ReactNode | undefined) {
   return true;
 }
 
-interface Props extends ComponentProps<"div"> {
+interface Props extends ComponentPropsWithoutRef<"div"> {
   label: string;
   description?: string;
   emptyWarning?: string;
 }
+
+const FieldGroup = forwardRef(FieldGroupWithRef);
+export default FieldGroup;

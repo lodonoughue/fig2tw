@@ -1,11 +1,19 @@
-import React, { ComponentProps } from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+} from "react";
 import { clsx } from "clsx";
 
-export default function Link({ className, ...rest }: ComponentProps<"a">) {
+function LinkWithRef(
+  { className, ...rest }: ComponentPropsWithoutRef<"a">,
+  ref: ForwardedRef<HTMLAnchorElement>,
+) {
   return (
     <a
       target="_blank"
       {...rest}
+      ref={ref}
       className={clsx(
         className,
         "text-on-surface text-label-small font-label-small underline rounded-xs",
@@ -15,3 +23,6 @@ export default function Link({ className, ...rest }: ComponentProps<"a">) {
     />
   );
 }
+
+const Link = forwardRef(LinkWithRef);
+export default Link;
