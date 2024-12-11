@@ -24,9 +24,7 @@ export function useResult<TRequest extends Channel, TResult extends Channel>(
     return () => unsubscribe();
   }, [broker, resultChannel, setState]);
 
-  useEffect(() => {
-    reload();
-  }, [reload]);
+  useEffect(() => reload(), [reload]);
 
   return { result, isLoading, reload };
 }

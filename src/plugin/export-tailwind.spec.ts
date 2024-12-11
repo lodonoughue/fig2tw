@@ -1,8 +1,11 @@
-import { fixtures } from "@common/fixtures";
 import { loadVariables } from "@plugin/variables";
 import { describe, expect, it, vi } from "vitest";
 import { exportTailwind } from "./export-tailwind";
 import { ColorScope, NumberScope } from "@common/variables";
+import { variableFixtures } from "@common/variables.fixtures";
+import { configFixtures } from "@common/config.fixtures";
+
+const fixtures = { ...variableFixtures, ...configFixtures };
 
 vi.mock("@plugin/variables", async importOriginal => {
   const original = await importOriginal<typeof import("@plugin/variables")>();

@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from "vitest";
-import { fixtures } from "@plugin/fixtures";
 import { getFigmaVariables } from "@plugin/figma";
 import {
   isSupportedByCss,
@@ -7,12 +6,16 @@ import {
   loadVariables,
 } from "./variables";
 import { chain } from "lodash";
+import { figmaFixtures } from "./figma.fixtures";
+import { variableFixtures } from "@common/variables.fixtures";
 
 vi.mock("@plugin/figma", async importOriginal => {
   const original = await importOriginal<typeof import("@plugin/figma")>();
   vi.spyOn(original, "getFigmaVariables");
   return original;
 });
+
+const fixtures = { ...variableFixtures, ...figmaFixtures };
 
 describe("isSupportedByCss", () => {
   it.each([

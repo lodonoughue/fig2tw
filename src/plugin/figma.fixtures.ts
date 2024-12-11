@@ -10,7 +10,6 @@ import {
   isFigmaNumberValue,
   isFigmaStringValue,
 } from "./figma";
-import { fixtures as commonFixtures } from "@common/fixtures";
 
 function createFigmaVariable({
   value,
@@ -261,8 +260,7 @@ function inferVariableCollection(
   return createFigmaCollection({ id: collectionId, modes });
 }
 
-export const fixtures = {
-  ...commonFixtures,
+export const figmaFixtures = {
   createFigmaVariable,
   createFigmaVariables,
   createFigmaCollection,
