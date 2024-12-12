@@ -26,7 +26,9 @@ const fixtures = { ...messageFixtures };
 describe("TailwindSection", () => {
   beforeEach(() => {
     vi.mocked(useResult).mockClear();
-    vi.mocked(downloadFile).mockClear();
+    vi.mocked(downloadFile)
+      .mockClear()
+      .mockImplementation(() => {});
   });
 
   it("should render TAILWIND_RESULT", () => {

@@ -26,7 +26,9 @@ const fixtures = { ...messageFixtures };
 describe("CssSection", () => {
   beforeEach(() => {
     vi.mocked(useResult).mockClear();
-    vi.mocked(downloadFile).mockClear();
+    vi.mocked(downloadFile)
+      .mockClear()
+      .mockImplementation(() => {});
   });
 
   it("should render CSS_RESULT", () => {

@@ -5,6 +5,7 @@ import React, {
   createContext,
   ForwardedRef,
   forwardRef,
+  PropsWithoutRef,
   useContext,
 } from "react";
 import { useId } from "react";
@@ -22,7 +23,9 @@ function FieldWithRef(
       {...rest}
       ref={ref}
       htmlFor={id}
-      className={clsx(className, "flex flex-col gap-xs")}>
+      className={clsx(className, "flex flex-col gap-xs")}
+      aria-label={label}
+      aria-description={description}>
       <Label size={labelSize}>{label}</Label>
       {description != null ? (
         <span className="font-body-small text-body-small">{description}</span>
@@ -43,10 +46,15 @@ function useFieldContext() {
 export function withFieldContext<P extends object>(
   Component: ComponentType<FieldContext & P>,
 ) {
-  return function WithFieldContext(props: Omit<P, keyof FieldContext>) {
+  function WithFieldContextWithRef(
+    props: PropsWithoutRef<Omit<P, keyof FieldContext>>,
+    ref: ForwardedRef<Omit<P, keyof FieldContext>>,
+  ) {
     const context = useFieldContext();
-    return <Component {...(props as P)} {...context} />;
-  };
+    return <Component {...(props as unknown as P)} {...context} ref={ref} />;
+  }
+
+  return forwardRef(WithFieldContextWithRef);
 }
 
 interface Props extends Omit<ComponentPropsWithoutRef<"label">, "htmlFor"> {

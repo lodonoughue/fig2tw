@@ -5,11 +5,14 @@ import React, {
   useContext,
   useState,
 } from "react";
-import { Config, defaultConfig } from "@common/config";
+import { Config, defaultConfig as _defaultConfig } from "@common/config";
 
 const ConfigContext = createContext<State | null>(null);
 
-export function ConfigProvider({ children }: PropsWithChildren) {
+export function ConfigProvider({
+  children,
+  defaultConfig = _defaultConfig,
+}: Props) {
   const [config, _setConfig] = useState<Config>(sanitize(defaultConfig));
 
   const setConfig = useCallback((config: Config) => {
@@ -40,6 +43,10 @@ function sanitize(config: Config) {
     // (eg. font-[size])
     trimKeywords: trimKeywords.sort(byLengthDesc),
   };
+}
+
+interface Props extends PropsWithChildren {
+  defaultConfig?: Config;
 }
 
 interface State {
