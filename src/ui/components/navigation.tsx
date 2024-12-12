@@ -1,11 +1,22 @@
-import React, { ComponentProps } from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+} from "react";
 import clsx from "clsx";
 
-export default function Navigation({
-  className,
-  ...rest
-}: ComponentProps<"nav">) {
+function NavigationWithRef(
+  { className, ...rest }: ComponentPropsWithoutRef<"nav">,
+  ref: ForwardedRef<HTMLElement>,
+) {
   return (
-    <nav {...rest} className={clsx(className, "flex flex-row px-md gap-md")} />
+    <nav
+      {...rest}
+      ref={ref}
+      className={clsx(className, "flex flex-row px-md gap-md")}
+    />
   );
 }
+
+const Navigation = forwardRef(NavigationWithRef);
+export default Navigation;

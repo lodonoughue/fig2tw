@@ -1,12 +1,19 @@
-import React from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+} from "react";
 import clsx from "clsx";
-import { ComponentProps } from "react";
 
-export default function TextArea({ className, ...rest }: Props) {
+function TextAreaWithRef(
+  { className, ...rest }: Props,
+  ref: ForwardedRef<HTMLTextAreaElement>,
+) {
   return (
     <div className={clsx(className, "bg-container rounded-sm p-xs flex ")}>
       <textarea
         {...rest}
+        ref={ref}
         className={clsx(
           "min-h-32 grow p-sm rounded-xs text-code font-code outline outline-2",
           "bg-container text-on-container resize-none outline-offset-2",
@@ -18,6 +25,9 @@ export default function TextArea({ className, ...rest }: Props) {
   );
 }
 
-interface Props extends Omit<ComponentProps<"textarea">, "children"> {
+interface Props extends Omit<ComponentPropsWithoutRef<"textarea">, "children"> {
   value?: string;
 }
+
+const TextArea = forwardRef(TextAreaWithRef);
+export default TextArea;

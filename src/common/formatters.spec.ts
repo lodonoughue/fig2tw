@@ -11,7 +11,15 @@ import {
 } from "./formatters";
 import { describe, expect, it } from "vitest";
 import { Collection } from "@common/variables";
-import { fixtures } from "./fixtures";
+import { variableFixtures } from "./variables.fixtures";
+import { configFixtures } from "./config.fixtures";
+import { formatterFixtures } from "./formatters.fixtures";
+
+const fixtures = {
+  ...configFixtures,
+  ...variableFixtures,
+  ...formatterFixtures,
+};
 
 describe("formatCssNumber", () => {
   it.each([

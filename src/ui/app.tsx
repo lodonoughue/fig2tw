@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createMessageBroker } from "@common/messages";
+import { createMessageBroker, MessageBroker } from "@common/messages";
 import Header from "./components/header";
 import Title from "./components/title";
 import HeaderLinkContainer from "./components/header-link-container";
@@ -14,7 +14,7 @@ import { ConfigProvider } from "./contexts/config";
 import Navigation from "./components/navigation";
 import ConfigSection from "./sections/config-section";
 
-const broker = createMessageBroker();
+const defaultBroker = createMessageBroker();
 
 const sections = {
   Tailwind: TailwindSection,
@@ -24,8 +24,11 @@ const sections = {
 } as const;
 const tabs = Object.keys(sections) as Tab[];
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>("Tailwind");
+export default function App({
+  broker = defaultBroker,
+  defaultTab = "Tailwind",
+}: Props) {
+  const [activeTab, setActiveTab] = useState<Tab>(defaultTab);
   const Section = sections[activeTab];
 
   return (
@@ -56,3 +59,8 @@ export default function App() {
 }
 
 type Tab = keyof typeof sections;
+
+interface Props {
+  defaultTab?: Tab;
+  broker?: MessageBroker;
+}

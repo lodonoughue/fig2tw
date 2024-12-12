@@ -1,5 +1,4 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { fixtures } from "./fixtures";
 import {
   findDefaultValue,
   findModeById,
@@ -12,6 +11,9 @@ import {
   isFigmaStringValue,
   isFigmaVariableAlias,
 } from "./figma";
+import { figmaFixtures } from "./figma.fixtures";
+
+const fixtures = { ...figmaFixtures };
 
 const getLocalVariables = vi.fn().mockReturnValue([]);
 const getLocalVariableCollections = vi.fn().mockReturnValue([]);

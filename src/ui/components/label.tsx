@@ -1,9 +1,20 @@
-import React, { ComponentProps } from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+} from "react";
 import clsx from "clsx";
 
-export default function Label({ className, size = "regular", ...rest }: Props) {
+function LabelWithRef(
+  { className, size = "regular", ...rest }: Props,
+  ref: ForwardedRef<HTMLSpanElement>,
+) {
   return (
-    <span {...rest} className={clsx(className, SIZE_CLASS_MAPPING[size])} />
+    <span
+      {...rest}
+      ref={ref}
+      className={clsx(className, SIZE_CLASS_MAPPING[size])}
+    />
   );
 }
 
@@ -12,6 +23,9 @@ const SIZE_CLASS_MAPPING = {
   small: "font-label-small text-label-small",
 } satisfies Record<NonNullable<Props["size"]>, string>;
 
-type Props = ComponentProps<"span"> & {
+type Props = ComponentPropsWithoutRef<"span"> & {
   size?: "regular" | "small";
 };
+
+const Label = forwardRef(LabelWithRef);
+export default Label;

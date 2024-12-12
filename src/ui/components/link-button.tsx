@@ -1,13 +1,18 @@
-import React, { ComponentProps } from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ForwardedRef,
+  forwardRef,
+} from "react";
 import { clsx } from "clsx";
 
-export default function LinkButton({
-  className,
-  ...rest
-}: ComponentProps<"button">) {
+function LinkButtonWithRef(
+  { className, ...rest }: ComponentPropsWithoutRef<"button">,
+  ref: ForwardedRef<HTMLButtonElement>,
+) {
   return (
     <button
       {...rest}
+      ref={ref}
       className={clsx(
         className,
         "text-on-surface text-label-small font-label-small underline rounded-xs",
@@ -17,3 +22,6 @@ export default function LinkButton({
     />
   );
 }
+
+const LinkButton = forwardRef(LinkButtonWithRef);
+export default LinkButton;

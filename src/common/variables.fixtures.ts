@@ -2,9 +2,6 @@
 // Coverage is not calculated in fixtures, because it's only meant to help
 // with the tests. It should  never be used in production code.
 
-import { Config, defaultConfig } from "./config";
-import { Options } from "./formatters";
-import { vi } from "vitest";
 import {
   AliasValue,
   BooleanValue,
@@ -21,34 +18,6 @@ import {
   Value,
   Variable,
 } from "./variables";
-
-function createConfig(partial: Partial<Config> = {}): Config {
-  const trimKeywords = defaultConfig.trimKeywords.toSorted(
-    (a, b) => b.length - a.length,
-  );
-  return { ...defaultConfig, trimKeywords, ...partial };
-}
-
-function createUnitsConfig(
-  partial: Partial<Config["units"]> = {},
-): Config["units"] {
-  return { ...defaultConfig.units, ...partial };
-}
-
-function createOptions({
-  config = createConfig(),
-  formatters = createFormattersOption(),
-}: Partial<Options> = {}): Options {
-  return { config, formatters };
-}
-
-function createFormattersOption({
-  formatColor = vi.fn().mockReturnValue("formatted-color"),
-  formatNumber = vi.fn().mockReturnValue("formatted-number"),
-  formatString = vi.fn().mockReturnValue("formatted-string"),
-}: Partial<Options["formatters"]> = {}): Options["formatters"] {
-  return { formatColor, formatNumber, formatString };
-}
 
 function createAliasValue({
   type = "alias",
@@ -238,11 +207,7 @@ function inferVariableDefaultValue<V extends Variable>(
   return result;
 }
 
-export const fixtures = {
-  createConfig,
-  createUnitsConfig,
-  createOptions,
-  createFormattersOption,
+export const variableFixtures = {
   createAliasValue,
   createNumberValue,
   createStringValue,

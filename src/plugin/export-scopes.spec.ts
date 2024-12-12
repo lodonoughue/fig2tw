@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { loadVariables } from "./variables";
-import { fixtures } from "./fixtures";
 import { exportScopes } from "./export-scopes";
+import { variableFixtures } from "@common/variables.fixtures";
+
+const fixtures = { ...variableFixtures };
 
 vi.mock("@plugin/variables", async importOriginal => {
   const original = await importOriginal<typeof import("@plugin/variables")>();

@@ -10,7 +10,9 @@ import {
   toColorHexPart,
   toColorRgbaPart,
 } from "./variables";
-import { fixtures } from "./fixtures";
+import { variableFixtures } from "./variables.fixtures";
+
+const fixtures = { ...variableFixtures };
 
 describe.each([
   { fnType: "alias", fn: isAliasValue },
