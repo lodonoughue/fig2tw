@@ -30,7 +30,7 @@ function FieldWithRef(
       {description != null ? (
         <span className="font-body-small text-body-small">{description}</span>
       ) : null}
-      <Context.Provider value={{ id }}>{children}</Context.Provider>
+      <Context.Provider value={{ id, label }}>{children}</Context.Provider>
     </label>
   );
 }
@@ -65,6 +65,7 @@ interface Props extends Omit<ComponentPropsWithoutRef<"label">, "htmlFor"> {
 
 interface FieldContext {
   id: string | null | undefined;
+  label: string | null | undefined;
 }
 
 const Field = forwardRef(FieldWithRef);

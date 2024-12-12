@@ -7,15 +7,19 @@ import React, {
 } from "react";
 
 function RadioGroupWithRef<T extends string>(
-  { id, name, className, value, choices, onChange, onBlur }: Props<T>,
+  { id, name, label, className, value, choices, onChange, onBlur }: Props<T>,
   ref: ForwardedRef<HTMLInputElement>,
 ) {
   const refIndex = value != null ? choices.indexOf(value) : 0;
   const defaultId = useId();
-  name = name || id || defaultId;
+  name = name || defaultId;
 
   return (
-    <div role="radiogroup" className={clsx(className, "flex flex-row gap-sm")}>
+    <div
+      id={id}
+      role="radiogroup"
+      className={clsx(className, "flex flex-row gap-sm")}
+      aria-label={label}>
       {choices.map((it, index) => (
         <Radio
           key={it}
@@ -86,6 +90,7 @@ interface Props<T extends string>
     "id" | "name" | "onChange" | "onBlur" | "className"
   > {
   choices: T[];
+  label?: string;
   value?: T;
 }
 

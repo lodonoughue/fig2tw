@@ -40,7 +40,7 @@ describe("withFieldContext", () => {
     );
   });
 
-  it("should pass field id to component", () => {
+  it("should pass field context to component", () => {
     const Component = vi.fn().mockReturnValue(null);
     const WithFieldContext = withFieldContext(Component);
 
@@ -51,7 +51,7 @@ describe("withFieldContext", () => {
     );
 
     expect(Component).toHaveBeenCalledWith(
-      { id: expect.any(String) },
+      { id: expect.any(String), label: "Foo bar" },
       expect.anything(),
     );
   });
