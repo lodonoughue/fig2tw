@@ -1,5 +1,7 @@
 # fig2tw
 
+![CI](https://github.com/lodonoughue/fig2tw/actions/workflows/node.js.yml/badge.svg)
+
 [fig2tw](https://www.figma.com/community/plugin/1376255637027661681/fig2tw) is
 a Figma plugin that converts Figma variables into a Tailwind plugin, CSS or
 JSON file.
