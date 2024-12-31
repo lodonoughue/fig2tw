@@ -6,9 +6,6 @@ import Column from "@ui/components/column";
 import Input from "@ui/components/input";
 import Field, { withFieldContext } from "@ui/components/field";
 import TextArea from "@ui/components/textarea";
-import { useResult } from "@ui/hooks/use-result";
-import { ScopeRequest, ScopeResult } from "@common/types";
-import { MessageBroker } from "@common/messages";
 import FieldGroup from "@ui/components/field-group";
 import { Config, Unit } from "@common/config";
 import RadioGroup from "@ui/components/radio-group";
@@ -16,9 +13,10 @@ import withController from "@ui/hocs/with-controller";
 import { useForm } from "react-hook-form";
 import { formatKebabCase, isBlank } from "@common/formatters";
 
-export default function ConfigSection({ className, broker }: SectionProps) {
-  const { control, onChange } = useConfigForm();
-  const { scopes, isLoading } = useScopes(broker);
+export default function ConfigSection({ className }: SectionProps) {
+  const { control, onChange, isLoading, scopes } = useConfigForm();
+
+  if (isLoading) return null;
 
   return (
     <Section className={className} direction="row">
@@ -68,11 +66,7 @@ export default function ConfigSection({ className, broker }: SectionProps) {
             scopes. When multiple scopes are applied to a number variable, \
             they should have the same unit configuration."
           }
-          emptyWarning={
-            isLoading
-              ? undefined
-              : "Define number variables to configure units."
-          }>
+          emptyWarning="Define number variables to configure units.">
           {scopes.has("all-numbers") ? (
             <Field label="All number scopes" labelSize="small">
               <FieldRadioGroup
@@ -159,23 +153,18 @@ export default function ConfigSection({ className, broker }: SectionProps) {
   );
 }
 
-function useScopes(broker: MessageBroker) {
-  const { result, isLoading } = useResult<ScopeRequest, ScopeResult>(
-    broker,
-    "SCOPE_RESULT",
-    "SCOPE_REQUEST",
-  );
-
-  return { scopes: new Set(result || []), isLoading };
-}
-
 function useConfigForm() {
-  const { config, setConfig } = useConfig();
+  const { isLoading, config, scopes, setConfig } = useConfig();
   const { control, handleSubmit } = useForm({
     values: toFormState(config),
   });
 
-  const onChange = handleSubmit(values =>
+  const onChange = handleSubmit(values => {
+    // Ignore coverage for next line because onChange should never be called
+    // when config is not yet loaded.
+    /* v8 ignore next */
+    if (config == null) return;
+
     setConfig({
       ...config,
       rootSelector: values.rootSelector,
@@ -192,13 +181,15 @@ function useConfigForm() {
         "line-height": values.lineHeight,
         "letter-spacing": values.letterSpacing,
       },
-    }),
-  );
+    });
+  });
 
-  return { control, onChange };
+  return { control, onChange, isLoading, scopes: new Set(scopes) };
 }
 
-function toFormState(config: Config) {
+function toFormState(config: Config | null) {
+  if (config == null) return undefined;
+
   return {
     rootSelector: config.rootSelector,
     baseFontSize: config.baseFontSize,

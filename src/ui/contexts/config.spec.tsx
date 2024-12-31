@@ -1,8 +1,12 @@
 import React from "react";
-import { act, renderHook } from "@testing-library/react";
+import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ConfigProvider, useConfig } from "./config";
-import { Config } from "@common/config";
+import { messageFixtures } from "@common/messages.fixtures";
+import { configFixtures } from "@common/config.fixtures";
+import { AnyScope } from "@common/variables";
+
+const fixtures = { ...messageFixtures, ...configFixtures };
 
 describe("useConfig", () => {
   it("should throw if used outside of ConfigProvider", () => {
@@ -13,34 +17,54 @@ describe("useConfig", () => {
     );
   });
 
-  it("should return state from ConfigProvider", () => {
-    const { result } = renderHook(() => useConfig(), {
-      wrapper: props => <ConfigProvider {...props} />,
+  it("should return isLoading=true until plugin response", () => {
+    const broker = fixtures.createMessageBroker();
+    broker.subscribe("LOAD_CONFIG_REQUEST", () => {
+      // do not post LOAD_CONFIG_RESULT
     });
 
-    expect(result.current.config).toBeDefined();
+    const { result } = renderHook(() => useConfig(), {
+      wrapper: props => <ConfigProvider broker={broker} {...props} />,
+    });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.config).toBeNull();
+    expect(result.current.scopes).toStrictEqual([]);
     expect(result.current.setConfig).toBeDefined();
   });
 
-  it("should update state when setConfig is called", () => {
-    const { result } = renderHook(() => useConfig(), {
-      wrapper: props => <ConfigProvider {...props} />,
+  it("should return result from broker", () => {
+    const config = fixtures.createConfig({ baseFontSize: 42 });
+    const scopes = ["all-colors", "all-numbers"] satisfies AnyScope[];
+
+    const broker = fixtures.createMessageBroker();
+    broker.subscribe("LOAD_CONFIG_REQUEST", () => {
+      broker.post("LOAD_CONFIG_RESULT", { config, scopes });
     });
 
-    const newConfig = { trimKeywords: ["foo", "bar"] } as Config;
-    act(() => result.current.setConfig(newConfig));
+    const { result } = renderHook(() => useConfig(), {
+      wrapper: props => <ConfigProvider broker={broker} {...props} />,
+    });
 
-    expect(result.current.config).toEqual(newConfig);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.config).toStrictEqual(config);
+    expect(result.current.scopes).toStrictEqual(scopes);
+    expect(result.current.setConfig).toBeDefined();
   });
 
-  it("should sort trimKeywords by length descending", () => {
+  it("should post SAVE_CONFIG_REQUEST when saving config", () => {
+    const broker = fixtures.createMessageBroker();
+    broker.subscribe("LOAD_CONFIG_REQUEST", () => {});
+
+    vi.spyOn(broker, "post");
+
     const { result } = renderHook(() => useConfig(), {
-      wrapper: props => <ConfigProvider {...props} />,
+      wrapper: props => <ConfigProvider broker={broker} {...props} />,
     });
 
-    const newConfig = { trimKeywords: ["a", "bc", "def"] } as Config;
-    act(() => result.current.setConfig(newConfig));
+    const newConfig = fixtures.createConfig({ baseFontSize: 42 });
+    result.current.setConfig(newConfig);
 
-    expect(result.current.config.trimKeywords).toEqual(["def", "bc", "a"]);
+    expect(broker.post).toHaveBeenCalledWith("SAVE_CONFIG_REQUEST", newConfig);
   });
 });

@@ -1,29 +1,27 @@
 import React from "react";
 import { messageFixtures } from "@common/messages.fixtures";
 import { render } from "@testing-library/react";
-import { useResult } from "@ui/hooks/use-result";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import ConfigSection from "./config-section";
 import { configFixtures } from "@common/config.fixtures";
-import { ConfigProvider } from "@ui/contexts/config";
+import { configProviderFixtures } from "@ui/contexts/config";
 import userEvent from "@testing-library/user-event";
 
-vi.mock("@ui/hooks/use-result", async importOriginal => {
-  const original =
-    await importOriginal<typeof import("@ui/hooks/use-result")>();
-  vi.spyOn(original, "useResult");
-  return original;
-});
-
-const fixtures = { ...messageFixtures, ...configFixtures };
+const fixtures = {
+  ...messageFixtures,
+  ...configFixtures,
+  ...configProviderFixtures,
+};
 
 describe("ConfigSection", () => {
-  beforeEach(() => {
-    vi.mocked(useResult).mockClear().mockReturnValue({
-      result: [],
-      isLoading: false,
-      reload: vi.fn(),
+  it("should render null when loading", () => {
+    const broker = fixtures.createMessageBroker();
+
+    const { container } = render(<ConfigSection broker={broker} />, {
+      wrapper: fixtures.configProviderOf({ isLoading: true, config: null }),
     });
+
+    expect(container.children).toHaveLength(0);
   });
 
   it.each([
@@ -42,20 +40,14 @@ describe("ConfigSection", () => {
     {
       role: "textbox",
       name: "Trim keywords",
-      value: "def, bc, a",
+      value: "a, bc, def",
       config: fixtures.createConfig({ trimKeywords: ["a", "bc", "def"] }),
     },
   ])("should bind $name field with config", ({ role, name, value, config }) => {
     const broker = fixtures.createMessageBroker();
 
-    vi.mocked(useResult).mockClear().mockReturnValue({
-      result: null,
-      isLoading: true,
-      reload: vi.fn(),
-    });
-
     const { getByRole } = render(<ConfigSection broker={broker} />, {
-      wrapper: props => <ConfigProvider {...props} defaultConfig={config} />,
+      wrapper: fixtures.configProviderOf({ config }),
     });
 
     const input = getByRole(role, { name }) as HTMLInputElement;
@@ -79,7 +71,7 @@ describe("ConfigSection", () => {
       role: "textbox",
       name: "Trim keywords",
       typeValue: "a, bc, def",
-      expectValue: "def, bc, a",
+      expectValue: "a, bc, def",
     },
     {
       role: "textbox",
@@ -95,7 +87,7 @@ describe("ConfigSection", () => {
       const config = fixtures.createConfig();
 
       const { getByRole } = render(<ConfigSection broker={broker} />, {
-        wrapper: props => <ConfigProvider {...props} defaultConfig={config} />,
+        wrapper: fixtures.configProviderOf({ config }),
       });
 
       const input = getByRole(role, { name }) as HTMLInputElement;
@@ -125,24 +117,17 @@ describe("ConfigSection", () => {
     { name: "Line height", scope: "line-height", unit: "em" },
     { name: "Letter spacing", scope: "letter-spacing", unit: "px" },
     { name: "Letter spacing", scope: "letter-spacing", unit: "em" },
-  ])(
+  ] as const)(
     "should bind $name to config ($unit) when $scope is defined",
     ({ name, scope, unit }) => {
       const broker = fixtures.createMessageBroker();
-      vi.mocked(useResult)
-        .mockClear()
-        .mockReturnValue({
-          result: [scope],
-          isLoading: false,
-          reload: vi.fn(),
-        });
 
       const config = fixtures.createConfig({
         units: fixtures.createUnitsConfig({ [scope]: unit }),
       });
 
       const { getByRole } = render(<ConfigSection broker={broker} />, {
-        wrapper: props => <ConfigProvider {...props} defaultConfig={config} />,
+        wrapper: fixtures.configProviderOf({ config, scopes: [scope] }),
       });
 
       const group = getByRole("radiogroup", { name }) as HTMLInputElement;
@@ -163,16 +148,10 @@ describe("ConfigSection", () => {
     { name: "Letter spacing", scope: "letter-spacing" },
   ])("should not render $name when $scope is not defined", ({ name }) => {
     const broker = fixtures.createMessageBroker();
-    vi.mocked(useResult).mockClear().mockReturnValue({
-      result: [],
-      isLoading: false,
-      reload: vi.fn(),
-    });
-
     const config = fixtures.createConfig();
 
     const { queryByRole } = render(<ConfigSection broker={broker} />, {
-      wrapper: props => <ConfigProvider {...props} defaultConfig={config} />,
+      wrapper: fixtures.configProviderOf({ config }),
     });
 
     const group = queryByRole("radiogroup", { name }) as HTMLInputElement;

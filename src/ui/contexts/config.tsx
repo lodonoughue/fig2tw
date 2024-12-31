@@ -1,26 +1,39 @@
 import React, {
+  ComponentType,
   createContext,
   PropsWithChildren,
   useCallback,
   useContext,
   useState,
 } from "react";
-import { Config, defaultConfig as _defaultConfig } from "@common/config";
+import { Config, defaultConfig } from "@common/config";
+import { useResult } from "@ui/hooks/use-result";
+import { MessageBroker } from "@common/messages";
+import {
+  LoadConfigRequest,
+  LoadConfigResult,
+  SaveConfigRequest,
+} from "@common/types";
+import { AnyScope } from "@common/variables";
 
 const ConfigContext = createContext<State | null>(null);
 
-export function ConfigProvider({
-  children,
-  defaultConfig = _defaultConfig,
-}: Props) {
-  const [config, _setConfig] = useState<Config>(sanitize(defaultConfig));
+export function ConfigProvider({ children, broker }: Props) {
+  const { isLoading, result } = useResult<LoadConfigRequest, LoadConfigResult>(
+    broker,
+    "LOAD_CONFIG_RESULT",
+    "LOAD_CONFIG_REQUEST",
+  );
+  const { config, scopes } = result || { config: null, scopes: [] };
 
-  const setConfig = useCallback((config: Config) => {
-    _setConfig(sanitize(config));
-  }, []);
+  const setConfig = useCallback(
+    (config: Config) =>
+      broker.post<SaveConfigRequest>("SAVE_CONFIG_REQUEST", config),
+    [broker],
+  );
 
   return (
-    <ConfigContext.Provider value={{ config, setConfig }}>
+    <ConfigContext.Provider value={{ isLoading, config, scopes, setConfig }}>
       {children}
     </ConfigContext.Provider>
   );
@@ -34,26 +47,37 @@ export function useConfig() {
   return context;
 }
 
-function sanitize(config: Config) {
-  const { trimKeywords } = config;
-  return {
-    ...config,
-    // sort by length descending to prevent keywords (eg. size) contained
-    // in bigger keywords (eg. font-size) to break the latter keyword
-    // (eg. font-[size])
-    trimKeywords: trimKeywords.sort(byLengthDesc),
-  };
-}
-
 interface Props extends PropsWithChildren {
-  defaultConfig?: Config;
+  broker: MessageBroker;
 }
 
 interface State {
-  config: Config;
+  isLoading: boolean;
+  config: Config | null;
+  scopes: AnyScope[];
   setConfig: (config: Config) => void;
 }
 
-function byLengthDesc(a: string, b: string) {
-  return b.length - a.length;
-}
+export const configProviderFixtures = {
+  configProviderOf({
+    isLoading = false,
+    config = defaultConfig,
+    scopes = [],
+    setConfig,
+  }: Partial<State>): ComponentType<PropsWithChildren> {
+    return function ConfigProvider({ children }) {
+      const [_config, _setConfig] = useState<Config | null>(config);
+      return (
+        <ConfigContext.Provider
+          value={{
+            isLoading,
+            scopes,
+            config: _config,
+            setConfig: setConfig || _setConfig,
+          }}>
+          {children}
+        </ConfigContext.Provider>
+      );
+    };
+  },
+};

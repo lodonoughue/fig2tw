@@ -4,6 +4,7 @@ import {
   CssResult,
   JsonRequest,
   JsonResult,
+  LoadConfigRequest,
   TailwindRequest,
   TailwindResult,
 } from "@common/types";
@@ -25,6 +26,8 @@ describe("App", () => {
     async ({ tab, defaultTab, expectedResult }) => {
       const user = userEvent.setup();
       const broker = fixtures.createMessageBroker();
+
+      broker.subscribe<LoadConfigRequest>("LOAD_CONFIG_REQUEST", () => {});
 
       broker.subscribe<TailwindRequest>("TAILWIND_REQUEST", () => {
         broker.post<TailwindResult>("TAILWIND_RESULT", "Tailwind result");

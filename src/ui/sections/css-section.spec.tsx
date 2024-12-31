@@ -1,19 +1,12 @@
 import React from "react";
 import { messageFixtures } from "@common/messages.fixtures";
 import { render } from "@testing-library/react";
-import { useResult } from "@ui/hooks/use-result";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import CssSection from "./css-section";
-import { ConfigProvider } from "@ui/contexts/config";
+import { configProviderFixtures } from "@ui/contexts/config";
 import { downloadFile } from "@ui/utils/download";
 import userEvent from "@testing-library/user-event";
-
-vi.mock("@ui/hooks/use-result", async importOriginal => {
-  const original =
-    await importOriginal<typeof import("@ui/hooks/use-result")>();
-  vi.spyOn(original, "useResult");
-  return original;
-});
+import { CssRequest, CssResult } from "@common/types";
 
 vi.mock("@ui/utils/download", async importOriginal => {
   const original = await importOriginal<typeof import("@ui/utils/download")>();
@@ -21,11 +14,10 @@ vi.mock("@ui/utils/download", async importOriginal => {
   return original;
 });
 
-const fixtures = { ...messageFixtures };
+const fixtures = { ...messageFixtures, ...configProviderFixtures };
 
 describe("CssSection", () => {
   beforeEach(() => {
-    vi.mocked(useResult).mockClear();
     vi.mocked(downloadFile)
       .mockClear()
       .mockImplementation(() => {});
@@ -33,39 +25,23 @@ describe("CssSection", () => {
 
   it("should render CSS_RESULT", () => {
     const broker = fixtures.createMessageBroker();
-
-    vi.mocked(useResult).mockReturnValue({
-      result: "under-test",
-      isLoading: false,
-      reload: vi.fn(),
+    broker.subscribe<CssRequest>("CSS_REQUEST", () => {
+      broker.post<CssResult>("CSS_RESULT", "under-test");
     });
 
-    const { getByText } = render(<CssSection broker={broker} />, {
-      wrapper: ConfigProvider,
-    });
+    const { getByText } = render(<CssSection broker={broker} />);
 
     expect(getByText("under-test")).toBeDefined();
-    expect(useResult).toHaveBeenCalledWith(
-      broker,
-      "CSS_RESULT",
-      "CSS_REQUEST",
-      expect.anything(),
-    );
   });
 
   it("should download a css file when download button is clicked", async () => {
     const user = userEvent.setup();
     const broker = fixtures.createMessageBroker();
-
-    vi.mocked(useResult).mockReturnValue({
-      result: "under-test",
-      isLoading: false,
-      reload: vi.fn(),
+    broker.subscribe<CssRequest>("CSS_REQUEST", () => {
+      broker.post<CssResult>("CSS_RESULT", "under-test");
     });
 
-    const { getByRole } = render(<CssSection broker={broker} />, {
-      wrapper: ConfigProvider,
-    });
+    const { getByRole } = render(<CssSection broker={broker} />);
 
     const downloadButton = getByRole("button", { name: "Download" });
     await user.click(downloadButton);
@@ -79,21 +55,17 @@ describe("CssSection", () => {
   it("should reload CSS_RESULT when reload button is clicked", async () => {
     const user = userEvent.setup();
     const broker = fixtures.createMessageBroker();
-    const reload = vi.fn();
-
-    vi.mocked(useResult).mockReturnValue({
-      result: "under-test",
-      isLoading: false,
-      reload,
+    broker.subscribe<CssRequest>("CSS_REQUEST", () => {
+      broker.post<CssResult>("CSS_RESULT", "under-test");
     });
+    vi.spyOn(broker, "post");
 
-    const { getByRole } = render(<CssSection broker={broker} />, {
-      wrapper: ConfigProvider,
-    });
-
+    const { getByRole } = render(<CssSection broker={broker} />);
     const downloadButton = getByRole("button", { name: "Reload" });
+
+    vi.mocked(broker.post).mockClear();
     await user.click(downloadButton);
 
-    expect(reload).toHaveBeenCalled();
+    expect(broker.post).toHaveBeenCalledWith("CSS_RESULT", "under-test");
   });
 });

@@ -32,7 +32,7 @@ export default function App({
   const Section = sections[activeTab];
 
   return (
-    <ConfigProvider>
+    <ConfigProvider broker={broker}>
       <Layout>
         <Header>
           <Title>fig2tw</Title>

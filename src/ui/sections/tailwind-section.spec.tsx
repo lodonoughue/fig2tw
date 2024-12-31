@@ -1,19 +1,11 @@
 import React from "react";
 import { messageFixtures } from "@common/messages.fixtures";
 import { render } from "@testing-library/react";
-import { useResult } from "@ui/hooks/use-result";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ConfigProvider } from "@ui/contexts/config";
 import { downloadFile } from "@ui/utils/download";
 import userEvent from "@testing-library/user-event";
 import TailwindSection from "./tailwind-section";
-
-vi.mock("@ui/hooks/use-result", async importOriginal => {
-  const original =
-    await importOriginal<typeof import("@ui/hooks/use-result")>();
-  vi.spyOn(original, "useResult");
-  return original;
-});
+import { TailwindRequest, TailwindResult } from "@common/types";
 
 vi.mock("@ui/utils/download", async importOriginal => {
   const original = await importOriginal<typeof import("@ui/utils/download")>();
@@ -25,7 +17,6 @@ const fixtures = { ...messageFixtures };
 
 describe("TailwindSection", () => {
   beforeEach(() => {
-    vi.mocked(useResult).mockClear();
     vi.mocked(downloadFile)
       .mockClear()
       .mockImplementation(() => {});
@@ -33,39 +24,23 @@ describe("TailwindSection", () => {
 
   it("should render TAILWIND_RESULT", () => {
     const broker = fixtures.createMessageBroker();
-
-    vi.mocked(useResult).mockReturnValue({
-      result: "under-test",
-      isLoading: false,
-      reload: vi.fn(),
+    broker.subscribe<TailwindRequest>("TAILWIND_REQUEST", () => {
+      broker.post<TailwindResult>("TAILWIND_RESULT", "under-test");
     });
 
-    const { getByText } = render(<TailwindSection broker={broker} />, {
-      wrapper: ConfigProvider,
-    });
+    const { getByText } = render(<TailwindSection broker={broker} />);
 
     expect(getByText("under-test")).toBeDefined();
-    expect(useResult).toHaveBeenCalledWith(
-      broker,
-      "TAILWIND_RESULT",
-      "TAILWIND_REQUEST",
-      expect.anything(),
-    );
   });
 
   it("should download a css file when download button is clicked", async () => {
     const user = userEvent.setup();
     const broker = fixtures.createMessageBroker();
-
-    vi.mocked(useResult).mockReturnValue({
-      result: "under-test",
-      isLoading: false,
-      reload: vi.fn(),
+    broker.subscribe<TailwindRequest>("TAILWIND_REQUEST", () => {
+      broker.post<TailwindResult>("TAILWIND_RESULT", "under-test");
     });
 
-    const { getByRole } = render(<TailwindSection broker={broker} />, {
-      wrapper: ConfigProvider,
-    });
+    const { getByRole } = render(<TailwindSection broker={broker} />);
 
     const downloadButton = getByRole("button", { name: "Download" });
     await user.click(downloadButton);
@@ -79,21 +54,17 @@ describe("TailwindSection", () => {
   it("should reload TAILWIND_RESULT when reload button is clicked", async () => {
     const user = userEvent.setup();
     const broker = fixtures.createMessageBroker();
-    const reload = vi.fn();
-
-    vi.mocked(useResult).mockReturnValue({
-      result: "under-test",
-      isLoading: false,
-      reload,
+    broker.subscribe<TailwindRequest>("TAILWIND_REQUEST", () => {
+      broker.post<TailwindResult>("TAILWIND_RESULT", "under-test");
     });
+    vi.spyOn(broker, "post");
 
-    const { getByRole } = render(<TailwindSection broker={broker} />, {
-      wrapper: ConfigProvider,
-    });
-
+    const { getByRole } = render(<TailwindSection broker={broker} />);
     const downloadButton = getByRole("button", { name: "Reload" });
+
+    vi.mocked(broker.post).mockClear();
     await user.click(downloadButton);
 
-    expect(reload).toHaveBeenCalled();
+    expect(broker.post).toHaveBeenCalledWith("TAILWIND_RESULT", "under-test");
   });
 });
