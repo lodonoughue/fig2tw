@@ -2,7 +2,7 @@ import React from "react";
 import Section from "@ui/components/section";
 import { SectionProps } from "@ui/types";
 import Result from "@ui/components/result";
-import { CssRequest, CssResult } from "@common/types";
+import { CssRequest, CssResult } from "@common/channels";
 import { useResult } from "@ui/hooks/use-result";
 import { downloadFile } from "@ui/utils/download";
 

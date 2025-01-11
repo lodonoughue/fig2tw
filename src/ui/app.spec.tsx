@@ -7,7 +7,7 @@ import {
   LoadConfigRequest,
   TailwindRequest,
   TailwindResult,
-} from "@common/types";
+} from "@common/channels";
 import { describe, expect, it } from "vitest";
 import App from "./app";
 import { render } from "@testing-library/react";

@@ -13,7 +13,7 @@ import {
   LoadConfigRequest,
   LoadConfigResult,
   SaveConfigRequest,
-} from "@common/types";
+} from "@common/channels";
 import { AnyScope } from "@common/variables";
 
 const ConfigContext = createContext<State | null>(null);

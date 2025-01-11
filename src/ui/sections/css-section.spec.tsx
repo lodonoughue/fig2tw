@@ -6,7 +6,7 @@ import CssSection from "./css-section";
 import { configProviderFixtures } from "@ui/contexts/config";
 import { downloadFile } from "@ui/utils/download";
 import userEvent from "@testing-library/user-event";
-import { CssRequest, CssResult } from "@common/types";
+import { CssRequest, CssResult } from "@common/channels";
 
 vi.mock("@ui/utils/download", async importOriginal => {
   const original = await importOriginal<typeof import("@ui/utils/download")>();

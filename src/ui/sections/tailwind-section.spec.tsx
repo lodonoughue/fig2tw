@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { downloadFile } from "@ui/utils/download";
 import userEvent from "@testing-library/user-event";
 import TailwindSection from "./tailwind-section";
-import { TailwindRequest, TailwindResult } from "@common/types";
+import { TailwindRequest, TailwindResult } from "@common/channels";
 
 vi.mock("@ui/utils/download", async importOriginal => {
   const original = await importOriginal<typeof import("@ui/utils/download")>();

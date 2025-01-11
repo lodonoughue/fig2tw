@@ -10,7 +10,7 @@ import {
   SaveConfigRequest,
   TailwindRequest,
   TailwindResult,
-} from "@common/types";
+} from "@common/channels";
 import { exportTailwind } from "@plugin/export-tailwind";
 import { exportCss } from "@plugin/export-css";
 import { exportJson } from "@plugin/export-json";

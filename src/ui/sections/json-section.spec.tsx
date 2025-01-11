@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { downloadFile } from "@ui/utils/download";
 import userEvent from "@testing-library/user-event";
 import JsonSection from "./json-section";
-import { JsonRequest, JsonResult } from "@common/types";
+import { JsonRequest, JsonResult } from "@common/channels";
 
 vi.mock("@ui/utils/download", async importOriginal => {
   const original = await importOriginal<typeof import("@ui/utils/download")>();
