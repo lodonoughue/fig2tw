@@ -3,6 +3,8 @@ import { createMessageBroker } from "@common/messages";
 import {
   CssRequest,
   CssResult,
+  DocumentIdRequest,
+  DocumentIdResult,
   JsonRequest,
   JsonResult,
   LoadConfigRequest,
@@ -16,10 +18,19 @@ import { exportCss } from "@plugin/export-css";
 import { exportJson } from "@plugin/export-json";
 import { exportScopes } from "@plugin/export-scopes";
 import { loadConfig, saveConfig } from "./config";
+import { loadDocumentId } from "./document";
 
 const defaultBroker = createMessageBroker();
 export function main(broker = defaultBroker) {
   console.clear();
+
+  broker.subscribe<DocumentIdRequest>(
+    "DOCUMENT_ID_REQUEST",
+    (defaultId: string) => {
+      const documentId = loadDocumentId(defaultId);
+      broker.post<DocumentIdResult>("DOCUMENT_ID_RESULT", documentId);
+    },
+  );
 
   broker.subscribe<TailwindRequest>("TAILWIND_REQUEST", async () => {
     const config = loadConfig();

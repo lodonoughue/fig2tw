@@ -7,6 +7,8 @@ import { configProviderFixtures } from "@ui/contexts/config";
 import { downloadFile } from "@ui/utils/download";
 import userEvent from "@testing-library/user-event";
 import { CssRequest, CssResult } from "@common/types";
+import { analyticsProviderFixtures } from "@ui/contexts/analytics";
+import { composeComponents } from "@ui/utils/react";
 
 vi.mock("@ui/utils/download", async importOriginal => {
   const original = await importOriginal<typeof import("@ui/utils/download")>();
@@ -14,7 +16,11 @@ vi.mock("@ui/utils/download", async importOriginal => {
   return original;
 });
 
-const fixtures = { ...messageFixtures, ...configProviderFixtures };
+const fixtures = {
+  ...messageFixtures,
+  ...configProviderFixtures,
+  ...analyticsProviderFixtures,
+};
 
 describe("CssSection", () => {
   beforeEach(() => {
@@ -29,7 +35,9 @@ describe("CssSection", () => {
       broker.post<CssResult>("CSS_RESULT", "under-test");
     });
 
-    const { getByText } = render(<CssSection broker={broker} />);
+    const { getByText } = render(<CssSection broker={broker} />, {
+      wrapper: composeComponents(fixtures.analyticsProviderOf({})),
+    });
 
     expect(getByText("under-test")).toBeDefined();
   });
@@ -41,7 +49,9 @@ describe("CssSection", () => {
       broker.post<CssResult>("CSS_RESULT", "under-test");
     });
 
-    const { getByRole } = render(<CssSection broker={broker} />);
+    const { getByRole } = render(<CssSection broker={broker} />, {
+      wrapper: composeComponents(fixtures.analyticsProviderOf({})),
+    });
 
     const downloadButton = getByRole("button", { name: "Download" });
     await user.click(downloadButton);
@@ -60,7 +70,9 @@ describe("CssSection", () => {
     });
     vi.spyOn(broker, "post");
 
-    const { getByRole } = render(<CssSection broker={broker} />);
+    const { getByRole } = render(<CssSection broker={broker} />, {
+      wrapper: composeComponents(fixtures.analyticsProviderOf({})),
+    });
     const downloadButton = getByRole("button", { name: "Reload" });
 
     vi.mocked(broker.post).mockClear();

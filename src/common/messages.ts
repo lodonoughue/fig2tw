@@ -54,9 +54,7 @@ export async function dispatchMessage(
   const [name, ...args] = message;
   const handlers = _getHandlers(subscriptions, name);
   assert(handlers.length > 0, `No handlers found for message "${name}"`);
-  await Promise.all(
-    handlers.map(handler => handler(...args) || Promise.resolve()),
-  );
+  await Promise.all(handlers.map(handler => Promise.resolve(handler(...args))));
 }
 
 export interface MessageBroker {
@@ -117,8 +115,7 @@ export function createMessageBroker(): MessageBroker {
   if (typeof window !== "undefined") {
     return new UiMessageBroker();
 
-    // This is unreachable because of the `isSupportedByJson` check. It is kept
-    // here in case the supported types change.
+    // Ignore in unit test coverage because this code is unreachable.
     /* v8 ignore next 4 */
   }
 

@@ -13,6 +13,7 @@ import JsonSection from "./sections/json-section";
 import { ConfigProvider } from "./contexts/config";
 import Navigation from "./components/navigation";
 import ConfigSection from "./sections/config-section";
+import { AnalyticsProvider } from "./contexts/analytics";
 
 const defaultBroker = createMessageBroker();
 
@@ -32,29 +33,33 @@ export default function App({
   const Section = sections[activeTab];
 
   return (
-    <ConfigProvider broker={broker}>
-      <Layout>
-        <Header>
-          <Title>fig2tw</Title>
-          <HeaderLinkContainer>
-            <Link href="https://github.com/lodonoughue/fig2tw">github.com</Link>
-          </HeaderLinkContainer>
-        </Header>
-        <Navigation>
-          <TabContainer className="grow">
-            {tabs.map(name => (
-              <Tab
-                key={name}
-                isSelected={activeTab === name}
-                onClick={() => setActiveTab(name)}>
-                {name}
-              </Tab>
-            ))}
-          </TabContainer>
-        </Navigation>
-        <Section broker={broker} />
-      </Layout>
-    </ConfigProvider>
+    <AnalyticsProvider broker={broker} section={activeTab}>
+      <ConfigProvider broker={broker}>
+        <Layout>
+          <Header>
+            <Title>fig2tw</Title>
+            <HeaderLinkContainer>
+              <Link href="https://github.com/lodonoughue/fig2tw">
+                github.com
+              </Link>
+            </HeaderLinkContainer>
+          </Header>
+          <Navigation>
+            <TabContainer className="grow">
+              {tabs.map(name => (
+                <Tab
+                  key={name}
+                  isSelected={activeTab === name}
+                  onClick={() => setActiveTab(name)}>
+                  {name}
+                </Tab>
+              ))}
+            </TabContainer>
+          </Navigation>
+          <Section broker={broker} />
+        </Layout>
+      </ConfigProvider>
+    </AnalyticsProvider>
   );
 }
 

@@ -6,6 +6,8 @@ import { downloadFile } from "@ui/utils/download";
 import userEvent from "@testing-library/user-event";
 import JsonSection from "./json-section";
 import { JsonRequest, JsonResult } from "@common/types";
+import { composeComponents } from "@ui/utils/react";
+import { analyticsProviderFixtures } from "@ui/contexts/analytics";
 
 vi.mock("@ui/utils/download", async importOriginal => {
   const original = await importOriginal<typeof import("@ui/utils/download")>();
@@ -13,7 +15,10 @@ vi.mock("@ui/utils/download", async importOriginal => {
   return original;
 });
 
-const fixtures = { ...messageFixtures };
+const fixtures = {
+  ...messageFixtures,
+  ...analyticsProviderFixtures,
+};
 
 describe("JsonSection", () => {
   beforeEach(() => {
@@ -28,7 +33,9 @@ describe("JsonSection", () => {
       broker.post<JsonResult>("JSON_RESULT", "under-test");
     });
 
-    const { getByText } = render(<JsonSection broker={broker} />);
+    const { getByText } = render(<JsonSection broker={broker} />, {
+      wrapper: composeComponents(fixtures.analyticsProviderOf({})),
+    });
 
     expect(getByText("under-test")).toBeDefined();
   });
@@ -40,7 +47,9 @@ describe("JsonSection", () => {
       broker.post<JsonResult>("JSON_RESULT", "under-test");
     });
 
-    const { getByRole } = render(<JsonSection broker={broker} />);
+    const { getByRole } = render(<JsonSection broker={broker} />, {
+      wrapper: composeComponents(fixtures.analyticsProviderOf({})),
+    });
 
     const downloadButton = getByRole("button", { name: "Download" });
     await user.click(downloadButton);
@@ -59,7 +68,9 @@ describe("JsonSection", () => {
     });
     vi.spyOn(broker, "post");
 
-    const { getByRole } = render(<JsonSection broker={broker} />);
+    const { getByRole } = render(<JsonSection broker={broker} />, {
+      wrapper: composeComponents(fixtures.analyticsProviderOf({})),
+    });
     const downloadButton = getByRole("button", { name: "Reload" });
 
     vi.mocked(broker.post).mockClear();

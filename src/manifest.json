@@ -7,6 +7,9 @@
   "ui": "./index.html",
   "documentAccess": "dynamic-page",
   "networkAccess": {
-    "allowedDomains": ["https://fonts.gstatic.com"]
+    "allowedDomains": [
+      "https://fonts.gstatic.com",
+      "https://api-js.mixpanel.com"
+    ]
   }
 }

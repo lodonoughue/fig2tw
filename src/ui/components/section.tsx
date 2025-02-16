@@ -2,13 +2,21 @@ import React, {
   ComponentPropsWithoutRef,
   ForwardedRef,
   forwardRef,
+  useEffect,
 } from "react";
 import clsx from "clsx";
+import { useAnalytics } from "@ui/contexts/analytics";
 
 function SectionWithRef(
   { className, direction = "col", ...rest }: Props,
   ref: ForwardedRef<HTMLDivElement>,
 ) {
+  const { track } = useAnalytics();
+
+  useEffect(() => {
+    track("Page Viewed");
+  }, [track]);
+
   return (
     <div
       {...rest}

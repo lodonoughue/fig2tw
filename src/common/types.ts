@@ -2,6 +2,16 @@ import { Config } from "./config";
 import { Channel } from "./messages";
 import { AnyScope } from "./variables";
 
+export interface DocumentIdRequest extends Channel {
+  name: "DOCUMENT_ID_REQUEST";
+  handler: (defaultId: string) => void;
+}
+
+export interface DocumentIdResult extends Channel {
+  name: "DOCUMENT_ID_RESULT";
+  handler: (documentId: string) => void;
+}
+
 export interface TailwindRequest extends Channel {
   name: "TAILWIND_REQUEST";
   handler: () => void;

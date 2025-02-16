@@ -7,6 +7,13 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { main } from "./main";
 import { loadConfig, saveConfig } from "@plugin/config";
 import { configFixtures } from "@common/config.fixtures";
+import { loadDocumentId } from "@plugin/document";
+
+vi.mock("@plugin/document", async importOriginal => {
+  const original = await importOriginal<typeof import("@plugin/document")>();
+  vi.spyOn(original, "loadDocumentId");
+  return original;
+});
 
 vi.mock("@plugin/export-tailwind", async importOriginal => {
   const original =
@@ -61,6 +68,8 @@ describe("main", () => {
     vi.mocked(exportCss).mockClear().mockResolvedValue("CSS result");
     vi.mocked(exportJson).mockClear().mockResolvedValue("JSON result");
 
+    vi.mocked(loadDocumentId).mockClear().mockReturnValue("Document ID result");
+
     vi.mocked(loadConfig)
       .mockClear()
       .mockReturnValue(fixtures.createConfig({ baseFontSize: 42 }));
@@ -80,6 +89,11 @@ describe("main", () => {
   });
 
   it.each([
+    {
+      request: "DOCUMENT_ID_REQUEST",
+      result: "DOCUMENT_ID_RESULT",
+      expected: "Document ID result",
+    },
     { request: "CSS_REQUEST", result: "CSS_RESULT", expected: "CSS result" },
     { request: "JSON_REQUEST", result: "JSON_RESULT", expected: "JSON result" },
     {

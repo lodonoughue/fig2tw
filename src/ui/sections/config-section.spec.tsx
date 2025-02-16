@@ -6,11 +6,14 @@ import ConfigSection from "./config-section";
 import { configFixtures } from "@common/config.fixtures";
 import { configProviderFixtures } from "@ui/contexts/config";
 import userEvent from "@testing-library/user-event";
+import { analyticsProviderFixtures } from "@ui/contexts/analytics";
+import { composeComponents } from "@ui/utils/react";
 
 const fixtures = {
   ...messageFixtures,
   ...configFixtures,
   ...configProviderFixtures,
+  ...analyticsProviderFixtures,
 };
 
 describe("ConfigSection", () => {
@@ -18,7 +21,10 @@ describe("ConfigSection", () => {
     const broker = fixtures.createMessageBroker();
 
     const { container } = render(<ConfigSection broker={broker} />, {
-      wrapper: fixtures.configProviderOf({ isLoading: true, config: null }),
+      wrapper: composeComponents(
+        fixtures.configProviderOf({ isLoading: true, config: null }),
+        fixtures.analyticsProviderOf({}),
+      ),
     });
 
     expect(container.children).toHaveLength(0);
@@ -47,7 +53,10 @@ describe("ConfigSection", () => {
     const broker = fixtures.createMessageBroker();
 
     const { getByRole } = render(<ConfigSection broker={broker} />, {
-      wrapper: fixtures.configProviderOf({ config }),
+      wrapper: composeComponents(
+        fixtures.configProviderOf({ config }),
+        fixtures.analyticsProviderOf({}),
+      ),
     });
 
     const input = getByRole(role, { name }) as HTMLInputElement;
@@ -87,7 +96,10 @@ describe("ConfigSection", () => {
       const config = fixtures.createConfig();
 
       const { getByRole } = render(<ConfigSection broker={broker} />, {
-        wrapper: fixtures.configProviderOf({ config }),
+        wrapper: composeComponents(
+          fixtures.configProviderOf({ config }),
+          fixtures.analyticsProviderOf({}),
+        ),
       });
 
       const input = getByRole(role, { name }) as HTMLInputElement;
@@ -127,7 +139,10 @@ describe("ConfigSection", () => {
       });
 
       const { getByRole } = render(<ConfigSection broker={broker} />, {
-        wrapper: fixtures.configProviderOf({ config, scopes: [scope] }),
+        wrapper: composeComponents(
+          fixtures.configProviderOf({ config, scopes: [scope] }),
+          fixtures.analyticsProviderOf({}),
+        ),
       });
 
       const group = getByRole("radiogroup", { name }) as HTMLInputElement;
@@ -151,7 +166,10 @@ describe("ConfigSection", () => {
     const config = fixtures.createConfig();
 
     const { queryByRole } = render(<ConfigSection broker={broker} />, {
-      wrapper: fixtures.configProviderOf({ config }),
+      wrapper: composeComponents(
+        fixtures.configProviderOf({ config }),
+        fixtures.analyticsProviderOf({}),
+      ),
     });
 
     const group = queryByRole("radiogroup", { name }) as HTMLInputElement;

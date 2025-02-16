@@ -2,6 +2,8 @@ import { messageFixtures } from "@common/messages.fixtures";
 import {
   CssRequest,
   CssResult,
+  DocumentIdRequest,
+  DocumentIdResult,
   JsonRequest,
   JsonResult,
   LoadConfigRequest,
@@ -28,6 +30,10 @@ describe("App", () => {
       const broker = fixtures.createMessageBroker();
 
       broker.subscribe<LoadConfigRequest>("LOAD_CONFIG_REQUEST", () => {});
+
+      broker.subscribe<DocumentIdRequest>("DOCUMENT_ID_REQUEST", () => {
+        broker.post<DocumentIdResult>("DOCUMENT_ID_RESULT", "User ID result");
+      });
 
       broker.subscribe<TailwindRequest>("TAILWIND_REQUEST", () => {
         broker.post<TailwindResult>("TAILWIND_RESULT", "Tailwind result");

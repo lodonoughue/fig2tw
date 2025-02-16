@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import Result from "./result";
 import userEvent from "@testing-library/user-event";
 import { copyToClipboard } from "@ui/utils/clipboard";
+import { analyticsProviderFixtures } from "@ui/contexts/analytics";
 
 vi.mock("@ui/utils/clipboard", async importOriginal => {
   const original = await importOriginal<typeof import("@ui/utils/clipboard")>();
@@ -11,9 +12,15 @@ vi.mock("@ui/utils/clipboard", async importOriginal => {
   return original;
 });
 
+const fixtures = {
+  ...analyticsProviderFixtures,
+};
+
 describe("Result", () => {
   it("should render children", () => {
-    const { getByText } = render(<Result>under-test</Result>);
+    const { getByText } = render(<Result>under-test</Result>, {
+      wrapper: fixtures.analyticsProviderOf({}),
+    });
 
     expect(getByText("under-test")).toBeDefined();
   });
@@ -21,6 +28,7 @@ describe("Result", () => {
   it("should apply the className", () => {
     const { getByTestId } = render(
       <Result data-testid="under-test" className="test-class" />,
+      { wrapper: fixtures.analyticsProviderOf({}) },
     );
 
     expect(getByTestId("under-test").classList).toContain("test-class");
@@ -34,7 +42,9 @@ describe("Result", () => {
     const user = userEvent.setup();
     vi.mocked(copyToClipboard).mockImplementation(() => Promise.resolve());
 
-    const { getByRole } = render(<Result />);
+    const { getByRole } = render(<Result />, {
+      wrapper: fixtures.analyticsProviderOf({}),
+    });
 
     const button = getByRole("button", { name });
     await user.click(button);
@@ -44,7 +54,9 @@ describe("Result", () => {
     const user = userEvent.setup();
     const onReload = vi.fn();
 
-    const { getByRole } = render(<Result onReload={onReload} />);
+    const { getByRole } = render(<Result onReload={onReload} />, {
+      wrapper: fixtures.analyticsProviderOf({}),
+    });
 
     const button = getByRole("button", { name: "Reload" });
     await user.click(button);
@@ -63,7 +75,9 @@ describe("Result", () => {
       const user = userEvent.setup();
       const onCopy = vi.fn();
 
-      const { getByRole } = render(<Result onCopy={onCopy}>{result}</Result>);
+      const { getByRole } = render(<Result onCopy={onCopy}>{result}</Result>, {
+        wrapper: fixtures.analyticsProviderOf({}),
+      });
 
       const button = getByRole("button", { name: "Copy" });
       await user.click(button);
@@ -85,6 +99,7 @@ describe("Result", () => {
 
       const { getByRole } = render(
         <Result onDownload={onDownload}>{result}</Result>,
+        { wrapper: fixtures.analyticsProviderOf({}) },
       );
 
       const button = getByRole("button", { name: "Download" });

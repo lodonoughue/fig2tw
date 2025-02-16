@@ -6,18 +6,38 @@ import React, {
 import clsx from "clsx";
 import { copyToClipboard } from "@ui/utils/clipboard";
 import Button from "./button";
+import { useAnalytics } from "@ui/contexts/analytics";
 
 function ResultWithRef(
   {
     className,
     children,
     onReload,
-    onDownload = () => {},
+    onDownload,
     onCopy = copyToClipboard,
     ...rest
   }: Props,
   ref: ForwardedRef<HTMLDivElement>,
 ) {
+  const { track } = useAnalytics();
+
+  function _onReload() {
+    track("Reload");
+    onReload?.();
+  }
+
+  function _onCopy() {
+    const result = sanitize(children);
+    track("Copy");
+    onCopy?.(result);
+  }
+
+  function _onDownload() {
+    const result = sanitize(children);
+    track("Download");
+    onDownload?.(result);
+  }
+
   return (
     <div
       {...rest}
@@ -31,13 +51,13 @@ function ResultWithRef(
         <pre className="font-code text-code">{children}</pre>
       </div>
       <div className="flex flex-row justify-end gap-sm">
-        <Button variant="regular" onClick={onReload}>
+        <Button variant="regular" onClick={_onReload}>
           Reload
         </Button>
-        <Button variant="regular" onClick={() => onCopy(sanitize(children))}>
+        <Button variant="regular" onClick={_onCopy}>
           Copy
         </Button>
-        <Button variant="accent" onClick={() => onDownload(sanitize(children))}>
+        <Button variant="accent" onClick={_onDownload}>
           Download
         </Button>
       </div>
