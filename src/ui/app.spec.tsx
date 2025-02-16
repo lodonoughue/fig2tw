@@ -10,13 +10,21 @@ import {
   TailwindRequest,
   TailwindResult,
 } from "@common/types";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import App from "./app";
 import { render } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 
 const fixtures = { ...messageFixtures };
+
+vi.mock("mixpanel-figma", async importOriginal => {
+  const original = await importOriginal<typeof import("mixpanel-figma")>();
+  vi.spyOn(original, "init").mockImplementation(() => original);
+  vi.spyOn(original, "identify").mockImplementation(() => {});
+  vi.spyOn(original, "track").mockImplementation(() => {});
+  return { default: original };
+});
 
 describe("App", () => {
   it.each([
