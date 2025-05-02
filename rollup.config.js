@@ -23,7 +23,7 @@ export default {
       babelHelpers: "bundled",
       presets: ["@babel/preset-env"],
     }),
-    //terser(),
+    terser(),
     copy({
       targets: [{ src: "./src/manifest.json", dest: "dist" }],
     }),

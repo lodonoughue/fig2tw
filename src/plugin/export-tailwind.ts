@@ -254,7 +254,7 @@ function convertToTailwindConfig(indentCount: number, figConfigKeys: string[]) {
 
   return toMultilineObject(indentCount, [
     "...figConfig",
-    `"extends": ${convertToTailwindExtendedConfig(figConfigKeys)}`,
+    `"extend": ${convertToTailwindExtendedConfig(figConfigKeys)}`,
     // colors
     ...applyIfDefined(allColors, () => [toScope("colors", [allColors])]),
     ...applyIfDefined(fillColors, () => [
