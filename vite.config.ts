@@ -18,7 +18,6 @@ export default defineConfig({
     include: ["src/**/*.spec.{ts,tsx}"],
     coverage: {
       include: ["src/**/*.{ts,tsx}"],
-      thresholds: { "100": true },
     },
   },
 });

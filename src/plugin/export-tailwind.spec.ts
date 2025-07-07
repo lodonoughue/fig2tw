@@ -54,7 +54,7 @@ describe("exportTailwind (colors)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "colors": ({ theme }) => ({ ...theme("figma:all-colors") }),
       };
@@ -97,7 +97,7 @@ describe("exportTailwind (colors)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
           "fill": ({ theme }) => ({ ...theme("figma:fill-color") }),
           "accentColor": ({ theme }) => ({ ...theme("figma:fill-color") }),
         },
@@ -143,7 +143,7 @@ describe("exportTailwind (colors)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
           "stroke": ({ theme }) => ({ ...theme("figma:stroke-color") }),
         },
         "borderColor": ({ theme }) => ({ ...theme("colors"), ...theme("figma:stroke-color") }),
@@ -190,7 +190,7 @@ describe("exportTailwind (colors)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "textColor": ({ theme }) => ({ ...theme("colors"), ...theme("figma:text-color") }),
         "textDecorationColor": ({ theme }) => ({ ...theme("colors"), ...theme("figma:text-color") }),
@@ -236,7 +236,7 @@ describe("exportTailwind (colors)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "boxShadowColor": ({ theme }) => ({ ...theme("colors"), ...theme("figma:effect-color") }),
       };
@@ -304,7 +304,7 @@ describe("exportTailwind (numbers)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
           "spacing": ({ theme }) => ({ ...theme("figma:all-numbers") }),
         },
       };
@@ -347,7 +347,7 @@ describe("exportTailwind (numbers)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "borderRadius": ({ theme }) => ({ ...theme("figma:radius") }),
       };
@@ -390,7 +390,7 @@ describe("exportTailwind (numbers)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
           "margin": ({ theme }) => ({ ...theme("figma:gap") }),
           "inset": ({ theme }) => ({ ...theme("figma:gap") }),
         },
@@ -440,7 +440,7 @@ describe("exportTailwind (numbers)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "strokeWidth": ({ theme }) => ({ ...theme("figma:stroke-width") }),
         "outlineWidth": ({ theme }) => ({ ...theme("figma:stroke-width") }),
@@ -492,7 +492,7 @@ describe("exportTailwind (numbers)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
           "size": ({ theme }) => ({ ...theme("figma:size") }),
           "width": ({ theme }) => ({ ...theme("figma:size") }),
           "minWidth": ({ theme }) => ({ ...theme("figma:size") }),
@@ -551,7 +551,7 @@ describe("exportTailwind (typography)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "fontSize": ({ theme }) => ({ ...theme("figma:font-size") }),
       };
@@ -605,7 +605,7 @@ describe("exportTailwind (typography)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "fontSize": ({ theme }) => ({ ...theme("figma:font-size") }),
       };
@@ -670,7 +670,7 @@ describe("exportTailwind (typography)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "fontSize": ({ theme }) => ({ ...theme("figma:font-size") }),
       };
@@ -728,7 +728,7 @@ describe("exportTailwind (typography)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "fontSize": ({ theme }) => ({ ...theme("figma:font-size") }),
       };
@@ -801,7 +801,7 @@ describe("exportTailwind (typography)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "fontSize": ({ theme }) => ({ ...theme("figma:font-size") }),
       };
@@ -848,7 +848,7 @@ describe("exportTailwind (typography)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "lineHeight": ({ theme }) => ({ ...theme("figma:line-height") }),
       };
@@ -892,7 +892,7 @@ describe("exportTailwind (typography)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "letterSpacing": ({ theme }) => ({ ...theme("figma:letter-spacing") }),
       };
@@ -936,7 +936,7 @@ describe("exportTailwind (typography)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "fontWeight": ({ theme }) => ({ ...theme("figma:font-weight") }),
       };
@@ -980,7 +980,7 @@ describe("exportTailwind (typography)", () => {
 
       const twConfig = {
         ...figConfig,
-        "extends": {
+        "extend": {
         },
         "fontFamily": ({ theme }) => ({ ...theme("figma:font-family") }),
       };
