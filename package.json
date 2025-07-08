@@ -1,6 +1,6 @@
 {
   "name": "fig2tw",
-  "version": "1.4.0",
+  "version": "1.8.0",
   "description": "Figma plugin to generate a TailwindCSS plugin from Figma variables",
   "type": "module",
   "main": "index.js",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.7",
-    "@figma/plugin-typings": "^1.100.2",
+    "@figma/plugin-typings": "^1.115.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",

@@ -33,21 +33,36 @@ export function main(broker = defaultBroker) {
   );
 
   broker.subscribe<TailwindRequest>("TAILWIND_REQUEST", async () => {
-    const config = loadConfig();
-    const result = await exportTailwind(config);
-    broker.post<TailwindResult>("TAILWIND_RESULT", result);
+    try {
+      const config = loadConfig();
+      const result = await exportTailwind(config);
+      broker.post<TailwindResult>("TAILWIND_RESULT", result);
+    } catch (error) {
+      console.error("Error while generating tailwind", error);
+      broker.post<TailwindResult>("TAILWIND_RESULT", getErrorMessage(error));
+    }
   });
 
   broker.subscribe<CssRequest>("CSS_REQUEST", async () => {
-    const config = loadConfig();
-    const result = await exportCss(config);
-    broker.post<CssResult>("CSS_RESULT", result);
+    try {
+      const config = loadConfig();
+      const result = await exportCss(config);
+      broker.post<CssResult>("CSS_RESULT", result);
+    } catch (error) {
+      console.error("Error while generating css", error);
+      broker.post<CssResult>("CSS_RESULT", getErrorMessage(error));
+    }
   });
 
   broker.subscribe<JsonRequest>("JSON_REQUEST", async () => {
-    const config = loadConfig();
-    const result = await exportJson(config);
-    broker.post<JsonResult>("JSON_RESULT", result);
+    try {
+      const config = loadConfig();
+      const result = await exportJson(config);
+      broker.post<JsonResult>("JSON_RESULT", result);
+    } catch (error) {
+      console.error("Error while generating JSON", error);
+      broker.post<JsonResult>("JSON_RESULT", getErrorMessage(error));
+    }
   });
 
   broker.subscribe<LoadConfigRequest>("LOAD_CONFIG_REQUEST", async () => {
@@ -66,4 +81,14 @@ export function main(broker = defaultBroker) {
   );
 
   figma.showUI(__html__, { width: 640, height: 712 });
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return `Error: ${error.message}`;
+  }
+  if (typeof error === "string") {
+    return `Error: ${error}`;
+  }
+  return "An unknown error occurred";
 }
