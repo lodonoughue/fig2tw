@@ -84,11 +84,10 @@ function RadioWithRef(
   );
 }
 
-interface Props<T extends string>
-  extends Pick<
-    ComponentPropsWithoutRef<"input">,
-    "id" | "name" | "onChange" | "onBlur" | "className"
-  > {
+interface Props<T extends string> extends Pick<
+  ComponentPropsWithoutRef<"input">,
+  "id" | "name" | "onChange" | "onBlur" | "className"
+> {
   choices: T[];
   label?: string;
   value?: T;

@@ -6,13 +6,17 @@ import { messageFixtures } from "@common/messages.fixtures";
 import { DocumentIdRequest, DocumentIdResult } from "@common/types";
 import mixpanel from "mixpanel-figma";
 
-vi.mock("mixpanel-figma", async importOriginal => {
-  const original = await importOriginal<typeof import("mixpanel-figma")>();
-  vi.spyOn(original, "init").mockImplementation(() => original);
-  vi.spyOn(original, "identify").mockImplementation(() => {});
-  vi.spyOn(original, "track").mockImplementation(() => {});
-  return { default: original };
+const { mockMixpanel } = vi.hoisted(() => {
+  const mockMixpanel = {
+    init: vi.fn(),
+    identify: vi.fn(),
+    track: vi.fn(),
+  };
+  mockMixpanel.init.mockImplementation(() => mockMixpanel);
+  return { mockMixpanel };
 });
+
+vi.mock("mixpanel-figma", () => ({ default: mockMixpanel }));
 
 const fixtures = { ...messageFixtures };
 

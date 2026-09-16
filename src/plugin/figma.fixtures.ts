@@ -5,6 +5,7 @@
 import { chain, zip } from "lodash";
 import { vi } from "vitest";
 import {
+  FigmaComposedColor,
   isFigmaBooleanValue,
   isFigmaColorValue,
   isFigmaNumberValue,
@@ -69,7 +70,9 @@ function createFigmaVariable({
     getSharedPluginData,
     setSharedPluginData,
     getSharedPluginDataKeys,
-  };
+    // `valuesByMode` may hold a composed color (see FigmaComposedColor),
+    // which the current @figma/plugin-typings version doesn't model yet.
+  } as FigmaVariable;
 }
 
 function createFigmaVariables(
@@ -126,7 +129,9 @@ function createFigmaCollection({
     getSharedPluginData,
     setSharedPluginData,
     getSharedPluginDataKeys,
-  };
+    // `isExtension`/`extend` (enterprise-only collection extension) aren't
+    // implemented by this fixture; it only mocks the base collection shape.
+  } as FigmaCollection;
 }
 
 function createFigmaCollections(
@@ -234,11 +239,14 @@ function inferValue(
   return "foo";
 }
 
-function inferValuesByMode(value: FigmaValue, collection: FigmaCollection) {
+function inferValuesByMode(
+  value: FigmaValue,
+  collection: FigmaCollection,
+): Variable["valuesByMode"] {
   return chain(collection.modes)
     .keyBy("modeId")
     .mapValues(() => value)
-    .value();
+    .value() as Variable["valuesByMode"];
 }
 
 function inferResolvedType(value: FigmaValue) {
@@ -275,7 +283,9 @@ export const figmaFixtures = {
 type FigmaMode = VariableCollection["modes"][number];
 type FigmaCollection = VariableCollection;
 type FigmaVariable = Variable;
-type FigmaValue = Variable["valuesByMode"][string];
+// Widened to include composed colors, which the current
+// @figma/plugin-typings version doesn't model yet (see FigmaComposedColor).
+type FigmaValue = Variable["valuesByMode"][string] | FigmaComposedColor;
 type FigmaColorDefinition = [number, number, number, number?] | [];
 
 interface FigmaVariableAliasDefinition {

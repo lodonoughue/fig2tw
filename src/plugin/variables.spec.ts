@@ -533,6 +533,75 @@ describe("loadVariables", () => {
     );
   });
 
+  it("should resolve a composed color (color aliased with an opacity override) to a concrete rgba", async () => {
+    const collection = fixtures.createFigmaCollection();
+    const variables = fixtures.createFigmaVariables([
+      {
+        name: "under-test",
+        collection,
+        resolvedType: "COLOR",
+        value: {
+          type: "VARIABLE_EXPRESSION",
+          expressionFunction: "COMPOSE_COLOR",
+          expressionArguments: [
+            { type: "VARIABLE_ALIAS", id: "base-color" },
+            50,
+          ],
+        },
+      },
+      {
+        id: "base-color",
+        collection,
+        resolvedType: "COLOR",
+        value: { r: 1, g: 0, b: 0 },
+      },
+    ]);
+    const mockedValue = { collections: [collection], variables };
+    vi.mocked(getFigmaVariables).mockReturnValue(Promise.resolve(mockedValue));
+
+    const result = (await loadVariables()).find(it => it.name === "under-test");
+    expect(result?.defaultValue).toEqual(
+      fixtures.createColorValue({
+        value: { rgba: [255, 0, 0, 0.5], hex: "#ff000080" },
+      }),
+    );
+  });
+
+  it("should resolve a composed color when the opacity override is itself an aliased variable", async () => {
+    const collection = fixtures.createFigmaCollection();
+    const variables = fixtures.createFigmaVariables([
+      {
+        name: "under-test",
+        collection,
+        resolvedType: "COLOR",
+        value: {
+          type: "VARIABLE_EXPRESSION",
+          expressionFunction: "COMPOSE_COLOR",
+          expressionArguments: [
+            { type: "VARIABLE_ALIAS", id: "base-color" },
+            { type: "VARIABLE_ALIAS", id: "opacity" },
+          ],
+        },
+      },
+      {
+        id: "base-color",
+        collection,
+        resolvedType: "COLOR",
+        value: { r: 0, g: 1, b: 0 },
+      },
+      { id: "opacity", collection, resolvedType: "FLOAT", value: 25 },
+    ]);
+    const mockedValue = { collections: [collection], variables };
+    vi.mocked(getFigmaVariables).mockReturnValue(Promise.resolve(mockedValue));
+
+    const result = (await loadVariables()).find(it => it.name === "under-test");
+    expect(result?.defaultValue).toEqual(
+      fixtures.createColorValue({
+        value: { rgba: [0, 255, 0, 0.25], hex: "#00ff0040" },
+      }),
+    );
+  });
+
   it.each([
     { value: { r: 1, g: 0, b: 0 }, expectedType: "color" },
     { value: "Foo Bar Baz", expectedType: "string" },

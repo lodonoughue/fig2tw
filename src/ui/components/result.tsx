@@ -69,8 +69,10 @@ function sanitize(result: Props["children"]) {
   return Array.isArray(result) ? result.join("\n") : result || "";
 }
 
-interface Props
-  extends Omit<ComponentPropsWithoutRef<"div">, "children" | "onCopy"> {
+interface Props extends Omit<
+  ComponentPropsWithoutRef<"div">,
+  "children" | "onCopy"
+> {
   children?: string | string[] | null;
   onReload?: () => void;
   onCopy?: (result: string) => void;

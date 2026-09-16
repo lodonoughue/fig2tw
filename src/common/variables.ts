@@ -49,17 +49,10 @@ export type ColorVariable = Variable<ColorValue, ColorScope>;
 export type AnyScope = StringScope | NumberScope | BooleanScope | ColorScope;
 
 export type AnyValue =
-  | AliasValue
-  | StringValue
-  | NumberValue
-  | BooleanValue
-  | ColorValue;
+  AliasValue | StringValue | NumberValue | BooleanValue | ColorValue;
 
 export type AnyVariable =
-  | StringVariable
-  | NumberVariable
-  | BooleanVariable
-  | ColorVariable;
+  StringVariable | NumberVariable | BooleanVariable | ColorVariable;
 
 export function isAliasValue(value: Value): value is AliasValue {
   return value.type === "alias";

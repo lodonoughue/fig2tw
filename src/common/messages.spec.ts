@@ -64,8 +64,7 @@ class UiFixture implements Fixture {
   readonly globalProperty = "window";
   readonly mock = {
     onmessage: undefined as
-      | ((event: MessageEvent<PluginEventData>) => void)
-      | undefined,
+      ((event: MessageEvent<PluginEventData>) => void) | undefined,
     parent: {
       postMessage: vi.fn(),
     },

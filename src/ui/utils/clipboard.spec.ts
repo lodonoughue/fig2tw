@@ -34,7 +34,7 @@ describe("copyToClipboard (legacy)", () => {
     vi.mocked(createHiddenElement).mockReturnValue(element);
     vi.mocked(document.execCommand).mockReturnValue(false);
 
-    expect(() => copyToClipboard("test")).rejects.toThrow();
+    await expect(() => copyToClipboard("test")).rejects.toThrow();
   });
 
   it("should focus the previously active element", async () => {

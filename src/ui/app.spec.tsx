@@ -18,13 +18,17 @@ import userEvent from "@testing-library/user-event";
 
 const fixtures = { ...messageFixtures };
 
-vi.mock("mixpanel-figma", async importOriginal => {
-  const original = await importOriginal<typeof import("mixpanel-figma")>();
-  vi.spyOn(original, "init").mockImplementation(() => original);
-  vi.spyOn(original, "identify").mockImplementation(() => {});
-  vi.spyOn(original, "track").mockImplementation(() => {});
-  return { default: original };
+const { mockMixpanel } = vi.hoisted(() => {
+  const mockMixpanel = {
+    init: vi.fn(),
+    identify: vi.fn(),
+    track: vi.fn(),
+  };
+  mockMixpanel.init.mockImplementation(() => mockMixpanel);
+  return { mockMixpanel };
 });
+
+vi.mock("mixpanel-figma", () => ({ default: mockMixpanel }));
 
 describe("App", () => {
   it.each([

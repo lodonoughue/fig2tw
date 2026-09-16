@@ -85,19 +85,23 @@ export function findVariableById(
   return variable;
 }
 
-export function isFigmaVariableAlias(
-  value: VariableValue,
-): value is VariableAlias {
+// These guards accept `unknown` rather than `VariableValue` because
+// `VariableValue` doesn't (yet) cover every shape Figma actually returns —
+// see FigmaComposedColor below. A runtime guard shouldn't be limited to the
+// exact static type it's there to double-check.
+export function isFigmaVariableAlias(value: unknown): value is VariableAlias {
   return (
     typeof value === "object" &&
+    value !== null &&
     "type" in value &&
     value.type === "VARIABLE_ALIAS"
   );
 }
 
-export function isFigmaColorValue(value: VariableValue): value is RGB | RGBA {
+export function isFigmaColorValue(value: unknown): value is RGB | RGBA {
   return (
     typeof value === "object" &&
+    value !== null &&
     "r" in value &&
     typeof value.r === "number" &&
     "g" in value &&
@@ -107,14 +111,40 @@ export function isFigmaColorValue(value: VariableValue): value is RGB | RGBA {
   );
 }
 
-export function isFigmaNumberValue(value: VariableValue): value is number {
+/**
+ * Figma's "Control opacity at scale" release (Sept 2026) lets a color
+ * variable alias another color variable with an opacity override. These
+ * are not yet represented in `@figma/plugin-typings` (see
+ * https://github.com/figma/plugin-typings/issues/375), so this shape is
+ * declared here based on the runtime values Figma actually returns.
+ */
+export interface FigmaComposedColor {
+  type: "VARIABLE_EXPRESSION";
+  expressionFunction: "COMPOSE_COLOR";
+  expressionArguments: [VariableAlias, number | VariableAlias];
+}
+
+export function isFigmaComposedColorValue(
+  value: unknown,
+): value is FigmaComposedColor {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "type" in value &&
+    value.type === "VARIABLE_EXPRESSION" &&
+    "expressionFunction" in value &&
+    value.expressionFunction === "COMPOSE_COLOR"
+  );
+}
+
+export function isFigmaNumberValue(value: unknown): value is number {
   return typeof value === "number";
 }
 
-export function isFigmaStringValue(value: VariableValue): value is string {
+export function isFigmaStringValue(value: unknown): value is string {
   return typeof value === "string";
 }
 
-export function isFigmaBooleanValue(value: VariableValue): value is boolean {
+export function isFigmaBooleanValue(value: unknown): value is boolean {
   return typeof value === "boolean";
 }

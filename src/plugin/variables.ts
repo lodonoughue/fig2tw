@@ -9,8 +9,10 @@ import {
   findModeById,
   findVariableById,
   findDefaultValue,
+  FigmaComposedColor,
   isFigmaBooleanValue,
   isFigmaColorValue,
+  isFigmaComposedColorValue,
   isFigmaNumberValue,
   isFigmaStringValue,
   isFigmaVariableAlias,
@@ -140,7 +142,7 @@ function toAnyVariable(
 function toVariable<V extends AnyValue, S extends string>(
   figmaVariable: FigmaVariable,
   resolvers: Resolvers,
-  toValue: (figmaValue: VariableValue) => V,
+  toValue: (figmaValue: VariableValue, resolvers: Resolvers) => V,
   toScopes: (scopes: VariableScope[]) => S[],
 ): Variable<V, S> {
   const { name, variableCollectionId } = figmaVariable;
@@ -150,7 +152,7 @@ function toVariable<V extends AnyValue, S extends string>(
   const key = toVariableKey(collection, figmaVariable);
   const scopes = toScopes(figmaVariable.scopes);
   const valuesByMode = getValuesByMode(figmaVariable, resolvers, toValue);
-  const defaultValue = toValue(resolveDefaultValue(figmaVariable));
+  const defaultValue = toValue(resolveDefaultValue(figmaVariable), resolvers);
   const { type } = defaultValue;
 
   return {
@@ -167,13 +169,15 @@ function toVariable<V extends AnyValue, S extends string>(
 function getValuesByMode<T>(
   variable: FigmaVariable,
   resolvers: Resolvers,
-  toValue: (figmaValue: VariableValue) => T,
+  toValue: (figmaValue: VariableValue, resolvers: Resolvers) => T,
 ): Record<string, T | AliasValue> {
   const collectionId = variable.variableCollectionId;
   return chain(variable.valuesByMode)
     .mapKeys((_, key) => toMode(resolvers.resolveMode(collectionId, key)))
     .mapValues(it =>
-      isFigmaVariableAlias(it) ? toAliasValue(it, resolvers) : toValue(it),
+      isFigmaVariableAlias(it)
+        ? toAliasValue(it, resolvers)
+        : toValue(it, resolvers),
     )
     .value();
 }
@@ -193,14 +197,64 @@ function toVariableKey(collection: Collection, figmaVariable: FigmaVariable) {
   return `${collection.name}/${figmaVariable.name}`;
 }
 
-function toColorValue(figmaValue: VariableValue): ColorValue {
+function toColorValue(
+  figmaValue: VariableValue,
+  resolvers: Resolvers,
+): ColorValue {
+  const color = toRgbColor(figmaValue, resolvers);
+  const hex = toHex(color);
+  const rgba = toRgba(color);
+  return { type: "color", value: { hex, rgba } };
+}
+
+// Flattens a color, following alias and composed-color (color + opacity
+// override) chains down to a concrete RGB/RGBA, the same way Figma's own
+// `Variable.resolveForConsumer` would.
+function toRgbColor(
+  figmaValue: VariableValue,
+  resolvers: Resolvers,
+): RGB | RGBA {
+  if (isFigmaComposedColorValue(figmaValue)) {
+    return toComposedRgbColor(figmaValue, resolvers);
+  }
+
   assert(
     isFigmaColorValue(figmaValue),
     `Unsupported color value: ${figmaValue}`,
   );
-  const hex = toHex(figmaValue);
-  const rgba = toRgba(figmaValue);
-  return { type: "color", value: { hex, rgba } };
+  return figmaValue;
+}
+
+function toComposedRgbColor(
+  { expressionArguments }: FigmaComposedColor,
+  resolvers: Resolvers,
+): RGBA {
+  const [colorAlias, opacityArgument] = expressionArguments;
+
+  const colorVariable = resolvers.resolveVariable(colorAlias.id);
+  const color = toRgbColor(
+    resolvers.resolveDefaultValue(colorVariable),
+    resolvers,
+  );
+
+  const opacityPercent = isFigmaVariableAlias(opacityArgument)
+    ? toOpacityPercent(opacityArgument, resolvers)
+    : opacityArgument;
+
+  return { ...color, a: opacityPercent / 100 };
+}
+
+function toOpacityPercent(
+  opacityAlias: VariableAlias,
+  resolvers: Resolvers,
+): number {
+  const opacityVariable = resolvers.resolveVariable(opacityAlias.id);
+  const value = resolvers.resolveDefaultValue(opacityVariable);
+  assert(
+    isFigmaNumberValue(value),
+    `Unsupported composed color opacity value: ${value}`,
+  );
+  return value;
 }
 
 function toHex(value: RGB | RGBA): string {
@@ -243,6 +297,9 @@ function toBooleanValue(figmaValue: VariableValue): BooleanValue {
   );
   return { type: "boolean", value: figmaValue };
 }
+
+// These three types have no composed/expression form (yet), so they ignore
+// the resolvers argument that toColorValue needs.
 
 function toColorScopes(scopes: VariableScope[]): ColorScope[] {
   return toScopes(COLOR_SCOPE_MAPPING, scopes);
