@@ -113,15 +113,15 @@ export function isFigmaColorValue(value: unknown): value is RGB | RGBA {
 
 /**
  * Figma's "Control opacity at scale" release (Sept 2026) lets a color
- * variable alias another color variable with an opacity override. These
- * are not yet represented in `@figma/plugin-typings` (see
+ * variable alias another color variable with an opacity override. This is
+ * not yet represented in `@figma/plugin-typings` (see
  * https://github.com/figma/plugin-typings/issues/375), so this shape is
- * declared here based on the runtime values Figma actually returns.
+ * declared here based on the runtime values Figma actually returns: a
+ * `{ color, opacity }` pair, not a `VARIABLE_EXPRESSION` wrapper.
  */
 export interface FigmaComposedColor {
-  type: "VARIABLE_EXPRESSION";
-  expressionFunction: "COMPOSE_COLOR";
-  expressionArguments: [VariableAlias, number | VariableAlias];
+  color: VariableAlias;
+  opacity: number | VariableAlias;
 }
 
 export function isFigmaComposedColorValue(
@@ -130,10 +130,10 @@ export function isFigmaComposedColorValue(
   return (
     typeof value === "object" &&
     value !== null &&
-    "type" in value &&
-    value.type === "VARIABLE_EXPRESSION" &&
-    "expressionFunction" in value &&
-    value.expressionFunction === "COMPOSE_COLOR"
+    "color" in value &&
+    isFigmaVariableAlias(value.color) &&
+    "opacity" in value &&
+    (isFigmaNumberValue(value.opacity) || isFigmaVariableAlias(value.opacity))
   );
 }
 

@@ -541,12 +541,8 @@ describe("loadVariables", () => {
         collection,
         resolvedType: "COLOR",
         value: {
-          type: "VARIABLE_EXPRESSION",
-          expressionFunction: "COMPOSE_COLOR",
-          expressionArguments: [
-            { type: "VARIABLE_ALIAS", id: "base-color" },
-            50,
-          ],
+          color: { type: "VARIABLE_ALIAS", id: "base-color" },
+          opacity: 50,
         },
       },
       {
@@ -575,12 +571,8 @@ describe("loadVariables", () => {
         collection,
         resolvedType: "COLOR",
         value: {
-          type: "VARIABLE_EXPRESSION",
-          expressionFunction: "COMPOSE_COLOR",
-          expressionArguments: [
-            { type: "VARIABLE_ALIAS", id: "base-color" },
-            { type: "VARIABLE_ALIAS", id: "opacity" },
-          ],
+          color: { type: "VARIABLE_ALIAS", id: "base-color" },
+          opacity: { type: "VARIABLE_ALIAS", id: "opacity" },
         },
       },
       {

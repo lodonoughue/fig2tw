@@ -220,26 +220,24 @@ function toRgbColor(
 
   assert(
     isFigmaColorValue(figmaValue),
-    `Unsupported color value: ${figmaValue}`,
+    `Unsupported color value: ${JSON.stringify(figmaValue)}`,
   );
   return figmaValue;
 }
 
 function toComposedRgbColor(
-  { expressionArguments }: FigmaComposedColor,
+  { color: colorAlias, opacity }: FigmaComposedColor,
   resolvers: Resolvers,
 ): RGBA {
-  const [colorAlias, opacityArgument] = expressionArguments;
-
   const colorVariable = resolvers.resolveVariable(colorAlias.id);
   const color = toRgbColor(
     resolvers.resolveDefaultValue(colorVariable),
     resolvers,
   );
 
-  const opacityPercent = isFigmaVariableAlias(opacityArgument)
-    ? toOpacityPercent(opacityArgument, resolvers)
-    : opacityArgument;
+  const opacityPercent = isFigmaVariableAlias(opacity)
+    ? toOpacityPercent(opacity, resolvers)
+    : opacity;
 
   return { ...color, a: opacityPercent / 100 };
 }
